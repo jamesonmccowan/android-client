@@ -28,6 +28,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".UserPreferenceActivity"
+            android:label="@string/title_activity_user_preferences" >
+        </activity>
     </application>
 
 </manifest>

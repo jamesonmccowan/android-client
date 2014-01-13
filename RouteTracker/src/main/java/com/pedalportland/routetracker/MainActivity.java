@@ -5,6 +5,7 @@ import com.pedalportland.routetracker.util.SystemUiHider;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.GpsStatus;
@@ -16,8 +17,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -137,6 +142,48 @@ public class MainActivity extends Activity {
 
         // register listener for trackingToggleButton
         trackingToggleButton.setOnCheckedChangeListener(trackingToggleButtonListener);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //return super.onCreateOptionsMenu(menu); // todo:  shouldn't this be called
+
+        try {
+            MenuInflater inflater = null;
+            if (null == (inflater = getMenuInflater())) {
+                return false;
+            }
+            inflater.inflate(R.menu.main_menu, menu);
+            return true;
+        }
+        catch(Exception ex){
+            Log.e(MODULE_TAG, ex.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //return super.onOptionsItemSelected(item);
+
+        try {
+            switch(item.getItemId()) {
+                case R.id.menu_settings:
+                    Intent intent = new Intent(MainActivity.this, UserPreferenceActivity.class);
+                    if (null != intent) {
+                        startActivity(intent);
+                    }
+                    break;
+
+                default:
+                    return false;
+            }
+            return true;
+        }
+        catch (Exception ex) {
+            Log.e(MODULE_TAG, ex.getMessage());
+        }
+        return false;
     }
 
     // listener for trackingToggleButton's events
@@ -311,8 +358,7 @@ public class MainActivity extends Activity {
 
     GpsStatus.Listener gpsStatusListener = new GpsStatus.Listener()
     {
-        public void onGpsStatusChanged(int event)
-        {
+        public void onGpsStatusChanged(int event) {
             if (event == GpsStatus.GPS_EVENT_FIRST_FIX)
             {
                 gpsFix = true;
