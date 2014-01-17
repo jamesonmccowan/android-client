@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger>
+
+    <dataSet config="main" >
+        <source path="C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\src\main\assets" />
+    </dataSet>
+    <dataSet config="defaultFlavor" >
+        <source path="C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\src\defaultFlavor\assets" />
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\src\debug\assets" />
+    </dataSet>
+
+</merger>

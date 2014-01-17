@@ -1,0 +1,32 @@
+# incremental data. DO NOT EDIT.
+# format is <lastModified> <length> <SHA-1> <path>
+# Encoding is UTF-8
+1385945652450 563264 44ec51e9d395a47aab135e5e1b556c0007442156 C:\Program Files (x86)\Android\android-studio\sdk\extras\android\m2repository\com\android\support\support-v4\18.0.0\support-v4-18.0.0.jar
+1389945822412 2463 3383a648957c4a3fd2e38d33de69858c70e5bd17 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\RouteCalculator.class
+1389945822338 7344 63482288bd194095b688a60ba8b379be3d03e753 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\MainActivity.class
+1389945822492 490 5659d63232fd22b2c107cbfb43a68ce0a97b80fb C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\BuildConfig.class
+1389945822452 443 91d809ffc55c2b2ac4af99f034d92e79147d7148 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\R$drawable.class
+1389945822325 1301 a9cf6ee822071ffe349816849e3dc520bb8c92f0 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\MainActivity$View_OnTouchListener.class
+1389945822488 590 5ef704c832f5bf5221887db6917fe130c0ae5865 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\R$style.class
+1389945822451 436 b65ed2ab7ddd05f7744d1364e78a6eca100d87e6 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\R$color.class
+1389945822324 2019 563af4a283b8f1cdc34b5c33dffd6aa65df95e00 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\MainActivity$View_OnVisibilityChangeListener.class
+1389945822372 2140 e9db97f49fdf8fff43033b0323161d7c6c82d532 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\util\SystemUiHider.class
+1389945822433 1519 0f5fbf00e666c9eab5e382bc0701461cdc27db09 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\util\SystemUiHiderBase.class
+1389945822490 674 77c00d6a34a165c717574a1460d3ccc0cd41ec01 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\R$styleable.class
+1389945822491 863 b7e12ccf64e097914b993b67f5d71d637cd71028 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\R.class
+1389945822314 1377 e1dfc7493c5e0d500cc2bb4fdc62caefe8189279 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\MainActivity$ContentView_ViewOnClickListener.class
+1389945822344 687 a83df8630f3ad740901f9d5b7b8061dee31acea8 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\util\SystemUiHider$1.class
+1389945822318 1813 fa48c771e918475a0fe7f7c253309154691d9aea C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\MainActivity$LocationManager_LocationListener.class
+1389945822331 1216 f49ec48a604bd2ca3ceb381d216d1d39882fbe08 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\MainActivity$SystemUiHider_Runnable.class
+1389945822445 2319 a3bd2c1adb533ac998983e87281346dbb7a00de2 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\util\SystemUiHiderHoneycomb.class
+1389945822452 497 8e5b39b493730984d7e5cad0cda3d40fc11820ab C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\R$dimen.class
+1389945822442 2119 cd55362e07502893877a38ab243517171e648a58 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\util\SystemUiHiderHoneycomb$1.class
+1389945822329 3239 cf2404efbb0473d5469b0e08833611da8a45302f C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\MainActivity$CompoundButton_MyOnCheckedChangeListener.class
+1389945822450 486 e045e001fa48a3dbc0bb7ed44db3cbf5f73a4b50 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\R$attr.class
+1389945822485 527 84c2617415a08e258951b29ea6e468b477138e35 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\R$id.class
+1389945822488 959 f8455c5ad52e1ff0cf15b1cb483469f9e8813178 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\R$string.class
+1389945822250 549 70d350afde31e2b763c2cae7201a3ad80615bcdb C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\DataUploader.class
+1389945822320 1733 e36a6bdb6157bdabe57e55ae9a0be6da66f8f518 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\MainActivity$GpsStatus_MyGpsStatusListener.class
+1389945822332 249 0244e8d05fd5b39e07f44f7d6bfe2134c28dda7f C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\MainActivity$1.class
+1389945822345 321 7bbacf3c89b7fdd3d5dad7ba23b3ec1e50bf3966 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\util\SystemUiHider$OnVisibilityChangeListener.class
+1389945822486 439 e4d3f820d24519c00c84c6ae24c4b19f0c3918e8 C:\Users\Robin\Documents\GitHub\android-client\RouteTracker\build\classes\defaultFlavor\debug\com\pedalportland\routetracker\R$layout.class
