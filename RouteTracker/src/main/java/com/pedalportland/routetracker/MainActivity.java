@@ -5,7 +5,6 @@ import com.pedalportland.routetracker.util.SystemUiHider;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.GpsStatus;
@@ -17,12 +16,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -86,52 +81,10 @@ public class MainActivity extends Activity {
 
         mSystemUiHider = SystemUiHider.getInstance(this, contentView, HIDER_FLAGS);
         mSystemUiHider.setup();
-        mSystemUiHider.setOnVisibilityChangeListener(
-                new SystemUiHider.OnVisibilityChangeListener() {
-                    // Cached values.
-                    int mControlsHeight;
-                    int mShortAnimTime;
-
-                    @Override
-                    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-                    public void onVisibilityChange(boolean visible) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-                            // If the ViewPropertyAnimator API is available
-                            // (Honeycomb MR2 and later), use it to animate the
-                            // in-layout UI controls at the bottom of the
-                            // screen.
-                            if (mControlsHeight == 0) {
-                                mControlsHeight = controlsView.getHeight();
-                            }
-                            if (mShortAnimTime == 0) {
-                                mShortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-                            }
-                            controlsView.animate().translationY(visible ? 0 : mControlsHeight).setDuration(mShortAnimTime);
-                        } else {
-                            // If the ViewPropertyAnimator APIs aren't
-                            // available, simply show or hide the in-layout UI
-                            // controls.
-                            controlsView.setVisibility(visible ? View.VISIBLE : View.GONE);
-                        }
-
-                        if (visible && AUTO_HIDE) {
-                            // Schedule a hide().
-                            delayedHide(AUTO_HIDE_DELAY_MILLIS);
-                        }
-                    }
-                });
+        mSystemUiHider.setOnVisibilityChangeListener(new View_OnVisibilityChangeListener(controlsView));
 
         // Set up the user interaction to manually show or hide the system UI.
-        contentView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (TOGGLE_ON_CLICK) {
-                    mSystemUiHider.toggle();
-                } else {
-                    mSystemUiHider.show();
-                }
-            }
-        });
+        contentView.setOnClickListener(new ContentView_ViewOnClickListener());
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
@@ -144,94 +97,11 @@ public class MainActivity extends Activity {
         trackingToggleButton.setOnCheckedChangeListener(trackingToggleButtonListener);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //return super.onCreateOptionsMenu(menu); // todo:  shouldn't this be called
 
-        try {
-            MenuInflater inflater = null;
-            if (null == (inflater = getMenuInflater())) {
-                return false;
-            }
-            inflater.inflate(R.menu.main_menu, menu);
-            return true;
-        }
-        catch(Exception ex){
-            Log.e(MODULE_TAG, ex.getMessage());
-            return false;
-        }
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        //return super.onOptionsItemSelected(item);
-
-        try {
-            switch(item.getItemId()) {
-                case R.id.menu_settings:
-                    Intent intent = new Intent(MainActivity.this, UserPreferenceActivity.class);
-                    if (null != intent) {
-                        startActivity(intent);
-                    }
-                    break;
-
-                default:
-                    return false;
-            }
-            return true;
-        }
-        catch (Exception ex) {
-            Log.e(MODULE_TAG, ex.getMessage());
-        }
-        return false;
-    }
 
     // listener for trackingToggleButton's events
     CompoundButton.OnCheckedChangeListener trackingToggleButtonListener =
-        new CompoundButton.OnCheckedChangeListener()
-        {
-            // called when user toggles tracking state
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
-            {
-                // if app is currently tracking
-                if (!isChecked)
-                {
-                    tracking = false; // just stopped tracking locations
-
-                    // create a dialog displaying the results
-                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
-                    dialogBuilder.setTitle(R.string.results);
-
-                    // display distanceTraveled traveled and average speed
-                    dialogBuilder.setMessage(String.format(getResources().getString(R.string.results_format),
-                            routeCalculator.getDistanceKM(),
-                            routeCalculator.getDistanceMI(),
-                            routeCalculator.getSpeedKM(),
-                            routeCalculator.getSpeedMI()));
-                    dialogBuilder.setPositiveButton(R.string.button_ok, null);
-                    dialogBuilder.show(); // display the dialog
-
-                    // Todo: long operations like this should be put on a different thread.
-                    try {
-                        DataUploader dataUploader = new DataUploader(getResources().getString(R.string.default_pedal_portland_uri));
-                        dataUploader.UploadData(routeCalculator.getLocations());
-                    }
-                    catch(Exception ex) {
-
-                    }
-
-
-                } // end if
-                else
-                {
-                    tracking = true; // app is now tracking
-                    //startTime = System.currentTimeMillis(); // get current time
-                    routeCalculator.reset();
-                } // end else
-            } // end method onCheckChanged
-        }; // end anonymous inner class
+            new CompoundButton_MyOnCheckedChangeListener();
 
 
     @Override
@@ -250,23 +120,10 @@ public class MainActivity extends Activity {
      * system UI. This is to prevent the jarring behavior of controls going away
      * while interacting with activity UI.
      */
-    View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-            }
-            return false;
-        }
-    };
+    View.OnTouchListener mDelayHideTouchListener = new View_OnTouchListener();
 
     Handler mHideHandler = new Handler();
-    Runnable mHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            mSystemUiHider.hide();
-        }
-    };
+    Runnable mHideRunnable = new SystemUiHider_Runnable();
 
     /**
      * Schedules a call to hide() in [delay] milliseconds, canceling any
@@ -318,7 +175,7 @@ public class MainActivity extends Activity {
             Log.e(MODULE_TAG, ex.getMessage());
         }
 
-    } // end method onStart
+    }
 
     // ********************************************************************
     // * Function: onStop
@@ -335,7 +192,7 @@ public class MainActivity extends Activity {
         catch (Exception ex){
             Log.e(MODULE_TAG, ex.getMessage());
         }
-    } // end method onStop
+    }
 
     // ********************************************************************
     // * Function: updateLocation
@@ -349,16 +206,74 @@ public class MainActivity extends Activity {
             routeCalculator.AddLocation(location);
         }
 
-    } // end method updateLocation
+    }
 
     // ********************************************************************
     // * Function: GpsStatus.Listener (anonymous inner class)
     // * Description: determine whether we have GPS fix
     // ********************************************************************
 
-    GpsStatus.Listener gpsStatusListener = new GpsStatus.Listener()
-    {
-        public void onGpsStatusChanged(int event) {
+    GpsStatus.Listener gpsStatusListener = new GpsStatus_MyGpsStatusListener();
+
+    // responds to events from the LocationManager
+    private final LocationListener locationListener = new LocationManager_LocationListener();
+
+    /**
+     * Inner Class: ContentView_ViewOnClickListener
+     *
+     * Description:  Class used to toggle display of UI elements in view
+     */
+    private class ContentView_ViewOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            if (TOGGLE_ON_CLICK) {
+                mSystemUiHider.toggle();
+            } else {
+                mSystemUiHider.show();
+            }
+        }
+    }
+
+    /**
+     * Inner Class: LocationManager_LocationListener
+     *
+     * Description:  Class handles LocationListener events for LocationManager
+     */
+    private class LocationManager_LocationListener
+            implements LocationListener {
+
+        // when the location is changed
+        public void onLocationChanged(Location location)
+        {
+            gpsFix = true; // if getting Locations, then we have a GPS fix
+
+            if (tracking) // if we're currently tracking
+                updateLocation(location); // update the location
+        } // end onLocationChanged
+
+        public void onProviderDisabled(String provider)
+        {
+        } // end onProviderDisabled
+
+        public void onProviderEnabled(String provider)
+        {
+        } // end onProviderEnabled
+
+        public void onStatusChanged(String provider,
+                                    int status, Bundle extras)
+        {
+        } // end onStatusChanged
+    }
+
+    /**
+     * Inner Class: GpsStatus_MyGpsStatusListener
+     *
+     * Description:  Class handles LocationListener events for GpsStatus
+     */
+    private class GpsStatus_MyGpsStatusListener
+            implements GpsStatus.Listener {
+        public void onGpsStatusChanged(int event)
+        {
             if (event == GpsStatus.GPS_EVENT_FIRST_FIX)
             {
                 gpsFix = true;
@@ -369,33 +284,128 @@ public class MainActivity extends Activity {
                 results.show(); // display the results
             }
         }
-    };        // end anonymous inner class
+    }
 
-    // responds to events from the LocationManager
-    private final LocationListener locationListener =
-        new LocationListener()
+    /**
+     * Inner Class: View_OnVisibilityChangeListener
+     *
+     * Description:  Class handles OnVisibilityChangeListener events for View
+     */
+    private class View_OnVisibilityChangeListener
+            implements SystemUiHider.OnVisibilityChangeListener {
+        private final View controlsView;
+        // Cached values.
+        int mControlsHeight;
+        int mShortAnimTime;
+
+        public View_OnVisibilityChangeListener(View controlsView) {
+            this.controlsView = controlsView;
+        }
+
+        @Override
+        @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+        public void onVisibilityChange(boolean visible) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+                // If the ViewPropertyAnimator API is available
+                // (Honeycomb MR2 and later), use it to animate the
+                // in-layout UI controls at the bottom of the
+                // screen.
+                if (mControlsHeight == 0) {
+                    mControlsHeight = controlsView.getHeight();
+                }
+                if (mShortAnimTime == 0) {
+                    mShortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+                }
+                controlsView.animate().translationY(visible ? 0 : mControlsHeight).setDuration(mShortAnimTime);
+            } else {
+                // If the ViewPropertyAnimator APIs aren't
+                // available, simply show or hide the in-layout UI
+                // controls.
+                controlsView.setVisibility(visible ? View.VISIBLE : View.GONE);
+            }
+
+            if (visible && AUTO_HIDE) {
+                // Schedule a hide().
+                delayedHide(AUTO_HIDE_DELAY_MILLIS);
+            }
+        }
+    }
+
+    /**
+     * Inner Class: View_OnVisibilityChangeListener
+     *
+     * Description:  Class handles OnTouchListener events for View
+     */
+    private class View_OnTouchListener
+            implements View.OnTouchListener {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if (AUTO_HIDE) {
+                delayedHide(AUTO_HIDE_DELAY_MILLIS);
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Inner Class: CompoundButton_MyOnCheckedChangeListener
+     *
+     * Description:  Class handles OnCheckedChangeListener events for CompoundButton
+     */
+    private class CompoundButton_MyOnCheckedChangeListener
+            implements CompoundButton.OnCheckedChangeListener {
+        // called when user toggles tracking state
+
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
         {
-            // when the location is changed
-            public void onLocationChanged(Location location)
+            // if app is currently tracking
+            if (!isChecked)
             {
-                gpsFix = true; // if getting Locations, then we have a GPS fix
+                tracking = false; // just stopped tracking locations
 
-                if (tracking) // if we're currently tracking
-                    updateLocation(location); // update the location
-            } // end onLocationChanged
+                // create a dialog displaying the results
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                dialogBuilder.setTitle(R.string.results);
 
-            public void onProviderDisabled(String provider)
+                // display distanceTraveled traveled and average speed
+                dialogBuilder.setMessage(String.format(getResources().getString(R.string.results_format),
+                        routeCalculator.getDistanceKM(),
+                        routeCalculator.getDistanceMI(),
+                        routeCalculator.getSpeedKM(),
+                        routeCalculator.getSpeedMI()));
+                dialogBuilder.setPositiveButton(R.string.button_ok, null);
+                dialogBuilder.show(); // display the dialog
+
+                // Todo: long operations like this should be put on a different thread.
+                try {
+                    DataUploader dataUploader = new DataUploader(getResources().getString(R.string.default_pedal_portland_uri));
+                    dataUploader.UploadData(routeCalculator.getLocations());
+                }
+                catch(Exception ex) {
+
+                }
+
+
+            } // end if
+            else
             {
-            } // end onProviderDisabled
+                tracking = true; // app is now tracking
+                //startTime = System.currentTimeMillis(); // get current time
+                routeCalculator.reset();
+            } // end else
+        } // end method onCheckChanged
+    }
 
-            public void onProviderEnabled(String provider)
-            {
-            } // end onProviderEnabled
-
-            public void onStatusChanged(String provider,
-                                        int status, Bundle extras)
-            {
-            } // end onStatusChanged
-        }; // end locationListener
-
+    /**
+     * Inner Class: SystemUiHider_Runnable
+     *
+     * Description:  Class implements a runnable for hiding he UI
+     */
+    private class SystemUiHider_Runnable implements Runnable {
+        @Override
+        public void run() {
+            mSystemUiHider.hide();
+        }
+    }
 }
