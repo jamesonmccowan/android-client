@@ -361,6 +361,7 @@ public class MainActivity extends Activity {
             if (!isChecked)
             {
                 tracking = false; // just stopped tracking locations
+                routeCalculator.stop();
 
                 // create a dialog displaying the results
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
@@ -378,7 +379,7 @@ public class MainActivity extends Activity {
                 // Todo: long operations like this should be put on a different thread.
                 try {
                     DataUploader dataUploader = new DataUploader(getResources().getString(R.string.default_pedal_portland_uri));
-                    dataUploader.UploadData(routeCalculator.getLocations());
+                    dataUploader.UploadData(routeCalculator.getRoute());
                 }
                 catch(Exception ex) {
 
@@ -390,7 +391,7 @@ public class MainActivity extends Activity {
             {
                 tracking = true; // app is now tracking
                 //startTime = System.currentTimeMillis(); // get current time
-                routeCalculator.reset();
+                routeCalculator.start();
             } // end else
         } // end method onCheckChanged
     }

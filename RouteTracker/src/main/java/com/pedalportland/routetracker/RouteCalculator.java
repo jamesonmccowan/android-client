@@ -1,96 +1,135 @@
 package com.pedalportland.routetracker;
 
 import android.location.Location;
+import java.util.List;
 import java.util.ArrayList;
 
 /**
- * Created by Robin on 1/9/14.
+ * This class collects route data and implements the calculation of total distance travelled
+ * and average speed
+ * @author Robin Murray
+ * @version 1.0
  */
 public class RouteCalculator {
 
-    private boolean _tracking;                                           // whether app is currently tracking
-    private long _startTime;                                             // time (in milliseconds) when tracking starts
-    private long _distanceTraveled;                                      // total distance the user traveled
+    private boolean tracking;                                           // whether app is currently tracking
+    private long startTime;                                             // time (in milliseconds) when tracking starts
+    private long distanceTraveled;                                      // total distance the user traveled
     private static final double MILLISECONDS_PER_HOUR = 1000 * 60 * 60; //
     private static final double MILES_PER_KILOMETER = 0.621371192;
 
-    private ArrayList<Location> _locations = null;
-    private Location _previousLocation;                                  // previous reported location
+    private List<Location> route = null;
+    private Location previousLocation;                                  // previous reported location
 
-    double _distanceKM;
-    double _speedKM;
-    double _distanceMI;
-    double _speedMI;
+    private double distanceKM;
+    private double speedKM;
+    private double distanceMI;
+    private double speedMI;
 
+    /**
+     * Instantiates an instance of a <code>RouteCalculator</code>
+     */
     public RouteCalculator() {
-        _locations = new ArrayList<Location>();
+        route = new ArrayList<Location>();
         this.reset();
     }
 
-    public void reset(){
-        _tracking = false;
-        _locations.clear();
-        _previousLocation = null;
+    /**
+     * Resets route data calculations
+     */
+    public void reset() {
+        tracking = false;
+        route.clear();
+        previousLocation = null;
 
-        _startTime = 0;
-        _distanceTraveled = 0;
-        _distanceKM = 0;
-        _speedKM = 0;
-        _distanceMI = 0;
-        _speedMI = 0;
+        startTime = 0;
+        distanceTraveled = 0;
+        distanceKM = 0.0;
+        speedKM = 0.0;
+        distanceMI = 0.0;
+        speedMI = 0.0;
     }
 
-    public void start(){
+    /**
+     * Resets and starts route data collection.
+     */
+    public void start() {
         this.reset();
-        _tracking=true;
-        _startTime = System.currentTimeMillis(); // get current time
+        tracking = true;
+        startTime = System.currentTimeMillis(); // get current time
     }
 
-    public void stop(){
+    /**
+     * Stops route data collection, and performs calculation of distance travelled.
+     */
+    public void stop() {
 
-        assert(_tracking);
+        assert(tracking);
 
         // compute the total time we were tracking
-        double expiredTime = (System.currentTimeMillis() - _startTime) / MILLISECONDS_PER_HOUR;
+        double expiredTime = (System.currentTimeMillis() - startTime) / MILLISECONDS_PER_HOUR;
         assert(expiredTime >= 0.0);
 
-        _tracking = false;
-        _distanceKM = _distanceTraveled / 1000.0;
-        _speedKM = _distanceKM / expiredTime;
-        _distanceMI = _distanceKM * MILES_PER_KILOMETER;
-        _speedMI = _distanceMI / expiredTime;
+        tracking = false;
+        distanceKM = distanceTraveled / 1000.0;
+        speedKM = distanceKM / expiredTime;
+        distanceMI = distanceKM * MILES_PER_KILOMETER;
+        speedMI = distanceMI / expiredTime;
     }
 
-    public double getDistanceKM(){
-        return _distanceKM;
+    /**
+     * Returns distance travelled in kilometers/hr.
+     */
+    public double getDistanceKM() {
+        assert(!tracking);
+        return distanceKM;
     }
 
-    public double getSpeedKM(){
-        return _speedKM;
+    /**
+     * Returns average speed in kilometers/hr.
+     */
+    public double getSpeedKM() {
+        assert(!tracking);
+        return speedKM;
     }
 
-    public double getDistanceMI(){
-        return _distanceMI;
+    /**
+     * Returns distance travelled in miles/hr.
+     */
+    public double getDistanceMI() {
+        assert(!tracking);
+        return distanceMI;
     }
 
-    public double getSpeedMI(){
-        return _speedMI;
+    /**
+     * Returns average speed in miles/hr.
+     */
+    public double getSpeedMI() {
+        assert(!tracking);
+        return speedMI;
     }
 
-    public void AddLocation(Location location){
+    /**
+     * Adds a new location to the route.
+     */
+    public void AddLocation(Location location) {
+        assert(tracking);
 
-        if (_previousLocation != null)
+        if (previousLocation != null)
         {
             // add to the total distanceTraveled
-            _distanceTraveled += location.distanceTo(_previousLocation);
+            distanceTraveled += location.distanceTo(previousLocation);
         }
 
-        _locations.add(location);
-        _previousLocation = location;
+        route.add(location);
+        previousLocation = location;
     }
 
-    public Object[] getLocations(){
-        return _locations.toArray();
+    /**
+     * Returns the route travelled.
+     */
+    public List getRoute() {
+        return route;
     }
 
 }

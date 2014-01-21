@@ -1,22 +1,30 @@
 package com.pedalportland.routetracker;
 
 import android.location.Location;
+import java.util.List;
 
 /**
- * Created by Robin on 1/10/14.
+ * This class collects uploads route data to the portland observatory
+ * @author Robin Murray
+ * @version 1.0
  */
 public class DataUploader {
 
-    private String _url;
+    final private String url;
 
-    public DataUploader(String url) {
-        _url = url;
+    /**
+     * Instantiates an instance of a <code>DataUploader</code>
+     */
+    public DataUploader(String pdxObservatory) {
+        url = pdxObservatory;
     }
 
-    public void UploadData(Object[] locations){
+    /**
+     * Uploads the data to the observatory
+     * @param locations The route data.
+     */
+    public void UploadData(List<Location> locations) {
         try {
-
-            Location[] points = (Location[]) locations;
             // upload data to web site here
         }
         catch(Exception ex) {
