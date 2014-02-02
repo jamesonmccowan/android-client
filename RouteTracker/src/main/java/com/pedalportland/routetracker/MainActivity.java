@@ -376,18 +376,8 @@ public class MainActivity extends Activity {
                 dialogBuilder.setPositiveButton(R.string.button_ok, null);
                 dialogBuilder.show(); // display the dialog
 
-                // Todo: long operations like this should be put on a different thread.
                 try {
                     // upload route
-                    /*String upload = dataUploader.UploadData(routeCalculator.getRoute());
-                    // create a dialog displaying if the message reached the server
-                    dialogBuilder = new AlertDialog.Builder(MainActivity.this);
-                    dialogBuilder.setTitle("Sending Route Information");
-
-                    // display distanceTraveled traveled and average speed
-                    dialogBuilder.setMessage(upload);
-                    dialogBuilder.setPositiveButton(R.string.button_ok, null);
-                    dialogBuilder.show(); // display the dialog*/
                     DataUploader dataUploader = new DataUploader(getResources().getString(R.string.default_pedal_portland_url));
                     dataUploader.UploadData(routeCalculator.getRoute());
                 }

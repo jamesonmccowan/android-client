@@ -24,8 +24,8 @@ public class DataUploader extends Thread {
     /**
      * Instantiates an instance of a <code>DataUploader</code>
      */
-    public DataUploader(String url) {
-        this.url = url;
+    public DataUploader(String pdxObservatory) {
+        url = pdxObservatory;
         version = "0.2";
     }
 
