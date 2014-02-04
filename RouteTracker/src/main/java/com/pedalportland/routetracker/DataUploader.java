@@ -8,7 +8,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * This class collects uploads route data to the portland observatory
@@ -26,7 +30,7 @@ public class DataUploader extends Thread {
      */
     public DataUploader(String pdxObservatory) {
         url = pdxObservatory;
-        version = "0.2";
+        version = "0.3";
     }
 
     /**
@@ -40,9 +44,13 @@ public class DataUploader extends Thread {
 
     private String toJSON(List<Location> locations) {
         JSONArray points = new JSONArray();
+        //TimeZone tz = TimeZone.getDefault();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"); // ISO 8601
+        //df.setTimeZone(tz);
+
         for(Location point : locations) {
             JSONObject obj = new JSONObject();
-            obj.put("time", point.getTime());
+            obj.put("time", df.format(new Date(point.getTime()))); // convert from UTC time, in milliseconds since January 1, 1970 to ISO 8601
             obj.put("latitude", point.getLatitude());
             obj.put("longitude", point.getLongitude());
             obj.put("accuracy", point.getAccuracy());
