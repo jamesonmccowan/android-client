@@ -12,19 +12,21 @@ import java.util.ArrayList;
  */
 public class RouteCalculator {
 
-    private boolean tracking;                                           // whether app is currently tracking
-    private long startTime;                                             // time (in milliseconds) when tracking starts
-    private long distanceTraveled;                                      // total distance the user traveled
-    private static final double MILLISECONDS_PER_HOUR = 1000 * 60 * 60; //
+    private boolean isTracking;     // Whether app is currently tracking
+    private long startTime;         // Time (in milliseconds) when tracking starts
+    private long distanceTraveled;  // Distance traveled by user in meters
+
+    // Constants used in calculating total route distance and average speed
+    private static final double MILLISECONDS_PER_HOUR = 1000 * 60 * 60;
     private static final double MILES_PER_KILOMETER = 0.621371192;
 
-    private List<Location> route = null;
-    private Location previousLocation;                                  // previous reported location
+    private List<Location> route = null;    // List of locations determining route
+    private Location previousLocation;      // previous reported location
 
-    private double distanceKM;
-    private double speedKM;
-    private double distanceMI;
-    private double speedMI;
+    private double distanceKM;  // Total distance in kilometers
+    private double speedKM;     // Average speed in kilometers/Hour
+    private double distanceMI;  // Total distance in miles
+    private double speedMI;     // Average speed in miles/Hour
 
     /**
      * Instantiates an instance of a <code>RouteCalculator</code>
@@ -38,7 +40,7 @@ public class RouteCalculator {
      * Resets route data calculations
      */
     public void reset() {
-        tracking = false;
+        isTracking = false;
         route.clear();
         previousLocation = null;
 
@@ -55,7 +57,7 @@ public class RouteCalculator {
      */
     public void start() {
         this.reset();
-        tracking = true;
+        isTracking = true;
         startTime = System.currentTimeMillis(); // get current time
     }
 
@@ -64,24 +66,27 @@ public class RouteCalculator {
      */
     public void stop() {
 
-        assert(tracking);
+        assert(isTracking);
 
-        // compute the total time we were tracking
-        double expiredTime = (System.currentTimeMillis() - startTime) / MILLISECONDS_PER_HOUR;
-        assert(expiredTime >= 0.0);
+        if (isTracking) {
+            // compute the total time we were isTracking
+            long currentTime = System.currentTimeMillis();
+            double expiredTime = ((double)currentTime - (double)startTime) / MILLISECONDS_PER_HOUR;
+            assert(expiredTime >= 0.0);
 
-        tracking = false;
-        distanceKM = distanceTraveled / 1000.0;
-        speedKM = distanceKM / expiredTime;
-        distanceMI = distanceKM * MILES_PER_KILOMETER;
-        speedMI = distanceMI / expiredTime;
+            isTracking = false;
+            distanceKM = distanceTraveled / 1000.0;
+            speedKM = distanceKM / expiredTime;
+            distanceMI = distanceKM * MILES_PER_KILOMETER;
+            speedMI = distanceMI / expiredTime;
+        }
     }
 
     /**
      * Returns distance travelled in kilometers/hr.
      */
     public double getDistanceKM() {
-        assert(!tracking);
+        assert(!isTracking);
         return distanceKM;
     }
 
@@ -89,7 +94,7 @@ public class RouteCalculator {
      * Returns average speed in kilometers/hr.
      */
     public double getSpeedKM() {
-        assert(!tracking);
+        assert(!isTracking);
         return speedKM;
     }
 
@@ -97,7 +102,7 @@ public class RouteCalculator {
      * Returns distance travelled in miles/hr.
      */
     public double getDistanceMI() {
-        assert(!tracking);
+        assert(!isTracking);
         return distanceMI;
     }
 
@@ -105,7 +110,7 @@ public class RouteCalculator {
      * Returns average speed in miles/hr.
      */
     public double getSpeedMI() {
-        assert(!tracking);
+        assert(!isTracking);
         return speedMI;
     }
 
@@ -113,16 +118,16 @@ public class RouteCalculator {
      * Adds a new location to the route.
      */
     public void AddLocation(Location location) {
-        assert(tracking);
 
-        if (previousLocation != null)
-        {
-            // add to the total distanceTraveled
-            distanceTraveled += location.distanceTo(previousLocation);
+        assert(isTracking);
+        if (isTracking) {
+            if (previousLocation != null) {
+                // add to the total distanceTraveled
+                distanceTraveled += location.distanceTo(previousLocation);
+            }
+            route.add(location);
+            previousLocation = location;
         }
-
-        route.add(location);
-        previousLocation = location;
     }
 
     /**
@@ -131,5 +136,4 @@ public class RouteCalculator {
     public List getRoute() {
         return route;
     }
-
 }
