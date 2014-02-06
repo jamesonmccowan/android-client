@@ -20,5 +20,6 @@ android {
 dependencies {
     compile 'com.android.support:support-v4:18.0.0'
     compile 'com.googlecode.json-simple:json-simple:1.1'
+    compile "joda-time:joda-time:2.3"
     compile 'junit:junit:4.10@jar'
 }

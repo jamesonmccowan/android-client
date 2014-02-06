@@ -1,6 +1,8 @@
 package com.pedalportland.routetracker;
 
 import android.location.Location;
+
+import org.joda.time.DateTime;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import java.io.BufferedReader;
@@ -8,9 +10,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -44,13 +43,10 @@ public class DataUploader extends Thread {
 
     private String toJSON(List<Location> locations) {
         JSONArray points = new JSONArray();
-        //TimeZone tz = TimeZone.getDefault();
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"); // ISO 8601
-        //df.setTimeZone(tz);
 
         for(Location point : locations) {
             JSONObject obj = new JSONObject();
-            obj.put("time", df.format(new Date(point.getTime()))); // convert from UTC time, in milliseconds since January 1, 1970 to ISO 8601
+            obj.put("time", (new DateTime(point.getTime())).toString("yyyy-MM-dd'T'HH:mmZZ")); // convert from UTC time, in milliseconds since January 1, 1970 to ISO 8601
             obj.put("latitude", point.getLatitude());
             obj.put("longitude", point.getLongitude());
             obj.put("accuracy", point.getAccuracy());
