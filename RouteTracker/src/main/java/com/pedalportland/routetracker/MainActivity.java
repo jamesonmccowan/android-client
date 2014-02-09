@@ -376,9 +376,9 @@ public class MainActivity extends Activity {
                 dialogBuilder.setPositiveButton(R.string.button_ok, null);
                 dialogBuilder.show(); // display the dialog
 
-                // Todo: long operations like this should be put on a different thread.
                 try {
-                    DataUploader dataUploader = new DataUploader(getResources().getString(R.string.default_pedal_portland_uri));
+                    // upload route
+                    DataUploader dataUploader = new DataUploader(getResources().getString(R.string.default_pedal_portland_url));
                     dataUploader.UploadData(routeCalculator.getRoute());
                 }
                 catch(Exception ex) {
