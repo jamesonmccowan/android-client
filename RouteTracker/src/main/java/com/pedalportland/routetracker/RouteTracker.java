@@ -3,7 +3,6 @@ package com.pedalportland.routetracker;
 import android.os.Bundle;
 import android.location.Criteria;
 import android.location.LocationManager;
-import android.os.Handler;
 import android.os.PowerManager;
 import android.location.GpsStatus;
 import android.location.Location;
@@ -14,13 +13,13 @@ import android.util.Log;
  * This class implements route tracking.
  * @author robin5 (Robin Murray)
  * @version 1.0
- * @created 2/3/14
+ * created 2/3/14
  */
 public class RouteTracker {
 
     private static final String MODULE_TAG = "RouteTracker";
 
-    private boolean mIsTracking = false;            // whether app is currently mIsTracking
+    private boolean isTracking = false;            // whether app is currently isTracking
     private LocationManager locationManager;        // gives location data
     private PowerManager powerManager = null;
     private PowerManager.WakeLock wakeLock = null;  // used to prevent device sleep
@@ -32,41 +31,92 @@ public class RouteTracker {
      * <code>RouteTracker<code/> constructor. This procedure initializes the class instance,
      * and copies references to the LocationManager and PowerManager instances instantiated
      * by the main application.
+     * @throws NullPointerException
      */
-    public RouteTracker(LocationManager locationManagerIn, PowerManager powerManagerIn) {
+    public RouteTracker(LocationManager locationManager, PowerManager powerManager) {
 
+        if (null == locationManager) {
+            throw new NullPointerException();
+        }
+
+        if (null == powerManager) {
+            throw new NullPointerException();
+        }
+
+        // Copy reference to LocationManager
+        this.locationManager = locationManager;
+
+        // Copy reference to PowerManager
+        this.powerManager = powerManager;
+    }
+
+    /**
+     * <code>RouteTracker<code/> constructor. This procedure initializes the class instance,
+     * and copies references to the LocationManager and PowerManager instances instantiated
+     * by the main application.
+     * @throws RouteTrackerException
+     */
+    public void Init() {
+
+        Criteria criteria;
+
+        // create Criteria object to specify location provider's settings
+        if (null == (criteria = new Criteria())) {
+            throw new RouteTrackerException(RouteTrackerException.Error.ERR_OUT_OF_MEM);
+        }
+
+        // fine location data (throws java.lang.IllegalArgumentException)
         try {
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        }
+        catch(IllegalArgumentException ex) {
+            throw new RouteTrackerException(RouteTrackerException.Error.ERR_BAD_ARG_ACCURACY, ex.getMessage());
+        }
 
-            // Copy reference to LocationManager
-            locationManager = locationManagerIn;
+        // need bearing to rotate map (throws java.lang.IllegalArgumentException)
+        try {
+            criteria.setBearingRequired(true);
+        }
+        catch(IllegalArgumentException ex) {
+            throw new RouteTrackerException(RouteTrackerException.Error.ERR_BAD_ARG_BEARING, ex.getMessage());
+        }
 
-            // Copy reference to PowerManager
-            powerManager = powerManagerIn;
+        criteria.setCostAllowed(true); // OK to incur monetary cost
+        criteria.setPowerRequirement(Criteria.POWER_LOW); // try to conserve
+        criteria.setAltitudeRequired(false); // don't need altitude data
 
-            // create Criteria object to specify location provider's settings
-            Criteria criteria = new Criteria();
-            criteria.setAccuracy(Criteria.ACCURACY_FINE); // fine location data
-            criteria.setBearingRequired(true); // need bearing to rotate map
-            criteria.setCostAllowed(true); // OK to incur monetary cost
-            criteria.setPowerRequirement(Criteria.POWER_LOW); // try to conserve
-            criteria.setAltitudeRequired(false); // don't need altitude data
-
-            // register listener to determine whether we have a GPS fix
+        // register listener to determine whether we have a GPS fix (throws java.lang.SecurityException)
+        try {
             locationManager.addGpsStatusListener(gpsStatusListener);
+        }
+        catch(SecurityException ex) {
+            throw new RouteTrackerException(RouteTrackerException.Error.ERR_SECURITY, ex.getMessage());
+        }
 
-            // get the best provider based on our Criteria
-            provider = locationManager.getBestProvider(criteria, true);
-
-            // get a wakelock preventing the device from sleeping
-            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "No sleep");
+        // get the best provider based on our Criteria
+        try {
+            if (null == (provider = locationManager.getBestProvider(criteria, true))) {
+                throw new RouteTrackerException(RouteTrackerException.Error.ERR_NO_PROVIDER);
+            }
         }
         catch(Exception ex) {
-            Log.e(MODULE_TAG, ex.getMessage());
+            throw new RouteTrackerException(RouteTrackerException.Error.ERR_NO_PROVIDER, ex.getMessage());
+        }
+
+        // get a wakelock preventing the device from sleeping
+        try {
+            if (null == (wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "No sleep"))) {
+                throw new RouteTrackerException(RouteTrackerException.Error.ERR_WAKELOCK);
+            }
+        }
+        catch(Exception ex) {
+            throw new RouteTrackerException(RouteTrackerException.Error.ERR_WAKELOCK, ex.getMessage());
         }
     }
 
     /**
      * This method initiates route tracking
+     * @throws RouteTrackerException
      */
     public void startTracking() {
 
@@ -76,37 +126,49 @@ public class RouteTracker {
         // Reset route information
         route.start();
 
-        // Listen for changes in location as often as possible
-        locationManager.requestLocationUpdates(provider, 0, 0, locationListener);
+        try {
+            // Listen for changes in location as often as possible (throws java.lang.IllegalArgumentException)
+            locationManager.requestLocationUpdates(provider, 0, 0, locationListener);
 
-        // Set flag for tracking in progress
-        mIsTracking = true;
+            // Set flag for tracking in progress
+            isTracking = true;
+        }
+        catch(IllegalArgumentException ex) {
+            throw new RouteTrackerException(RouteTrackerException.Error.ERR_BAD_REQUEST_UPDATES, ex.getMessage());
+        }
     }
 
     /**
      * This method terminates route tracking
+     * @throws java.lang.IllegalArgumentException
      */
     public void stopTracking() {
 
-        // Remove listener
-        locationManager.removeUpdates(locationListener);
-
-        // Release the wakelock
-        wakeLock.release();
-
         // Set flag denoting we are no longer tracking route
-        mIsTracking = false;
+        isTracking = false;
 
-        // Terminate collection of route information.  Note thatthis also cause some
-        // calculations to occur in RouteCalculator class
-        route.stop();
+        try {
+            // Remove listener (throws java.lang.IllegalArgumentException)
+            locationManager.removeUpdates(locationListener);
+        }
+        catch(IllegalArgumentException ex) {
+            throw new RouteTrackerException(RouteTrackerException.Error.ERR_BAD_ARG_REMOVE_UPDATES, ex.getMessage());
+        }
+        finally {
+            // Release the wakelock
+            wakeLock.release();
+
+            // Terminate collection of route information.  Note that this causes
+            // calculations to occur in RouteCalculator class
+            route.stop();
+        }
     }
 
     /**
      * Flag signifying route tracking is in progress
      */
-    private boolean isTracking() {
-        return mIsTracking;
+    public boolean isTracking() {
+        return this.isTracking;
     }
 
     /**
@@ -136,7 +198,7 @@ public class RouteTracker {
 
             gpsFix = true; // if getting Locations, then we have a GPS fix
 
-            if (mIsTracking) // if we're currently mIsTracking
+            if (isTracking) // if we're currently isTracking
                 updateLocation(location); // update the location
         } // end onLocationChanged
 
@@ -186,20 +248,8 @@ public class RouteTracker {
     public void shutDown() {
 
         try {
-            if (null != wakeLock)
-                if (wakeLock.isHeld())
-                    wakeLock.release();
-
-            if (null != locationManager) {
-
-                if (null != locationListener) {
-                    locationManager.removeUpdates(locationListener);
-                }
-
-                if (null != gpsStatusListener) {
-                    locationManager.removeGpsStatusListener(gpsStatusListener);
-                }
-            }
+            if (isTracking)
+                stopTracking();
         }
         catch(Exception ex) {
             Log.e(MODULE_TAG, ex.getMessage());

@@ -8,11 +8,9 @@ import android.app.AlertDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.util.Log;
 
@@ -24,8 +22,8 @@ import android.util.Log;
  * @author robin5 (Robin Murray)
  * @version 1.0
  * @see <code>Activity<code/> class.
- * @created 1/3/14
  * @see SystemUiHider
+ * created 1/3/14
  */
 public class MainActivity extends Activity {
     /**
@@ -89,13 +87,21 @@ public class MainActivity extends Activity {
 
         trackingToggleButton.setOnTouchListener(mDelayHideTouchListener);
 
-        // register listener for trackingToggleButton
-        trackingToggleButton.setOnCheckedChangeListener(trackingToggleButtonListener);
-
         if (null != (myApp = MyApplication.getInstance())) {
+
+            // Initialize reference to RouteTracker
             routeTracker = myApp.getRouteTracker();
+            if (null != routeTracker) {
+                // Set button to match tracking state
+                trackingToggleButton.setChecked(routeTracker.isTracking());
+            }
+
+            // Initialize reference to DataUploader
             dataUploader = myApp.getDataUploader();
         }
+
+        // register listener for trackingToggleButton
+        trackingToggleButton.setOnCheckedChangeListener(trackingToggleButtonListener);
     }
 
     // listener for trackingToggleButton's events
@@ -213,7 +219,14 @@ public class MainActivity extends Activity {
     @Override
     public void onDestroy() {
         try {
-            myApp.shutDown();
+            // Check if currently tracking route. If so save it.
+            if (null != routeTracker) {
+                if (routeTracker.isTracking()) {
+                    routeTracker.stopTracking();
+                    RouteCalculator route = routeTracker.getRoute();
+                    //todo: save route for later processing.
+                }
+            }
             super.onDestroy(); // call the super method
         }
         catch (Exception ex){
@@ -313,9 +326,15 @@ public class MainActivity extends Activity {
         {
             try {
                 if (null == routeTracker ) {
-                    ErrorDialog(R.string.err_bad_route_tracker);
-                    buttonView.setChecked(false);
+                    String message;
+                    if (null != (message = myApp.getInitErrorMessage())) {
+                        ErrorDialog(message);
                     }
+                    else {
+                        ErrorDialog(R.string.err_bad_route_tracker);
+                    }
+                    buttonView.setChecked(false);
+                }
                 else {
                     if (isChecked) {
                         // Start the route tracking
@@ -343,6 +362,9 @@ public class MainActivity extends Activity {
                         }
                     }
                 }
+            }
+            catch(RouteTrackerException ex) {
+                ErrorDialog(ex.getError());
             }
             catch(Exception ex) {
                 Log.e(MODULE_TAG, ex.getMessage());
@@ -373,14 +395,22 @@ public class MainActivity extends Activity {
         }
     }
 
+    private void ErrorDialog(RouteTrackerException.Error error) {
+        ErrorDialog(String.format("%s (%d)", getResources().getString(R.string.rt_error), error.value()));
+    }
+
     private void ErrorDialog(int messageId) {
+        ErrorDialog(getResources().getString(messageId));
+    }
+
+    private void ErrorDialog(String message) {
 
         // create a dialog displaying the message
         AlertDialog.Builder alertDialog;
 
         if (null != (alertDialog = new AlertDialog.Builder(MainActivity.this))) {
             alertDialog.setTitle(R.string.error_dialog_title);
-            alertDialog.setMessage(getResources().getString(messageId));
+            alertDialog.setMessage(message);
             alertDialog.setPositiveButton(R.string.button_ok, null);
             alertDialog.show(); // display the dialog
         }

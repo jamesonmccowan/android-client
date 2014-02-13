@@ -17,5 +17,10 @@
     <string name="err_bad_route_tracker">Route tracking not functional</string>
     <string name="err_no_gps">Can\'t start tracking: GPS signal not acquired.</string>
     <string name="err_no_route_data">No route calculated</string>
+    <string name="ex_no_location_mgr">Application could not acquire access to LocationManager</string>
+    <string name="ex_no_power_mgr">Application could not acquire access to PowerManager</string>
+    <string name="ex_error_out_of_memory">Could not initialize RouteTracker (Out of Memory!)</string>
+    <string name="rt_error">Could not initialize RouteTracker</string>
+    <string name="du_null_pointer">DataUploader detected null parameters</string>
 
 </resources>

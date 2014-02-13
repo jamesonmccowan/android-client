@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.location.LocationManager;
 import android.os.PowerManager;
-import android.util.Log;
 
 /**
  * This class extends the <code>Application<code/> class, and implements it as a singleton.
@@ -13,7 +12,7 @@ import android.util.Log;
  * @author robin5 (Robin Murray)
  * @version 1.0
  * @see <code>Application<code/> class.
- * @created 2/2/14
+ * created 2/2/14
  */
 public class MyApplication extends Application {
 
@@ -28,6 +27,8 @@ public class MyApplication extends Application {
     // Reference to DataUploader instance
     private DataUploader dataUploader = null;
 
+    private String initErrorMessage = null;
+
     // Returns the application instance
     public static MyApplication getInstance() {
         return myApp;
@@ -36,21 +37,95 @@ public class MyApplication extends Application {
     /**
      * Called when the application is starting, before any activity, service,
      * or receiver objects (excluding content providers) have been created.
+     * @throws java.lang.OutOfMemoryError
      */
     @Override
     public final void onCreate() {
         super.onCreate();
-        try {
-            LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-            PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
 
-            routeTracker = new RouteTracker(locationManager, powerManager);
-            dataUploader = new DataUploader(getResources().getString(R.string.default_pedal_portland_uri));
-            myApp = this;
+        LocationManager locationManager = null;
+        PowerManager powerManager = null;
+
+        myApp = this;
+
+        // Obtain a reference to the LocationManager service
+        try {
+            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+            if (null == locationManager) {
+                setInitErrorMessage(getResources().getString(R.string.ex_no_location_mgr));
+                return;
+            }
         }
         catch(Exception ex) {
-            Log.e(MODULE_TAG, ex.getMessage());
+            setInitErrorMessage(getResources().getString(R.string.ex_no_location_mgr));
+            return;
         }
+
+        // Obtain a reference to the PowerManager service
+        try {
+            powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            if (null == powerManager) {
+                setInitErrorMessage(getResources().getString(R.string.ex_no_power_mgr));
+                return;
+            }
+        }
+        catch(Exception ex) {
+            setInitErrorMessage(getResources().getString(R.string.ex_no_power_mgr));
+            return;
+        }
+
+        // Create a RouteTracker object and maintain a reference to it
+        try {
+            routeTracker = new RouteTracker(locationManager, powerManager);
+            if (null == routeTracker) {
+                setInitErrorMessage(getResources().getString(R.string.ex_error_out_of_memory));
+                return;
+            }
+        }
+        catch(Exception ex) {
+            setInitErrorMessage(ex.getMessage());
+            return;
+        }
+
+        // Initialize the RouteTracker
+        try {
+            routeTracker.Init();
+        }
+        catch(RouteTrackerException ex) {
+            setInitErrorMessage(getResources().getString(R.string.rt_error), ex.getError());
+            routeTracker = null;
+            return;
+        }
+
+        // create a DataUploader object and maintain a reference to it
+        try {
+            dataUploader = new DataUploader(
+                getResources().getString(R.string.default_pedal_portland_uri));
+        }
+        catch(NullPointerException ex) {
+            setInitErrorMessage(getResources().getString(R.string.du_null_pointer));
+        }
+    }
+
+    /**
+     * Sets the modules exception message.
+     */
+    private void setInitErrorMessage(String message, RouteTrackerException.Error error) {
+        setInitErrorMessage(String.format("%s (%d)", message, error.value()));
+    }
+
+    /**
+     * Sets the modules exception message.
+     */
+    private void setInitErrorMessage(String message) {
+        initErrorMessage = message;
+    }
+
+    /**
+     * Returns the modules exception message.
+     */
+    public String getInitErrorMessage() {
+        return initErrorMessage;
     }
 
     /**
@@ -85,7 +160,6 @@ public class MyApplication extends Application {
      * @see <code>RouteTracker<code/> class.
      */
     public RouteTracker getRouteTracker() {
-        assert(routeTracker != null);
         return routeTracker;
     }
 
@@ -94,25 +168,6 @@ public class MyApplication extends Application {
      * @see <code>DataUploader<code/> class.
      */
     public DataUploader getDataUploader() {
-        assert(dataUploader != null);
         return dataUploader;
-    }
-
-    /**
-     * Called when the application is terminating, and local
-     * resources and objects should be reclaimed.
-     */
-    public void shutDown() {
-
-        // Reclaim routeTracker resources
-        if (null != routeTracker) {
-            routeTracker.shutDown();
-            routeTracker = null;
-        }
-
-        // Reclaim dataUploader resources
-        if (null != dataUploader) {
-            dataUploader = null;
-        }
     }
 }
