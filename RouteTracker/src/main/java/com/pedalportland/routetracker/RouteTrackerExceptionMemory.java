@@ -1,22 +1,22 @@
 package com.pedalportland.routetracker;
 
 /**
- * This class extends the <code>RuntimeException<code/> class, and implements
- * a new exception for RouteTracker specific errors
+ * This class extends the <code>RuntimeException<code/> class, and
+ * happens when the RouteTracker cannot allocate memory
  *
  * @author robin5 (Robin Murray)
  * @version 1.0
  * @see <code>RuntimeException<code/> class.
- * created 2/12/14
+ * created 2/14/14
  */
 
-public class RouteTrackerException extends RuntimeException {
+public class RouteTrackerExceptionMemory extends RuntimeException  {
 
     /**
      * Constructs a new {@code RouteTrackerException} with the current stack
      * trace and the specified detail message.
      */
-    public RouteTrackerException() {
+    public RouteTrackerExceptionMemory() {
         super();
     }
 
@@ -27,7 +27,7 @@ public class RouteTrackerException extends RuntimeException {
      * @param detailMessage
      *            the detail message for this exception.
      */
-    public RouteTrackerException(String detailMessage) {
+    public RouteTrackerExceptionMemory(String detailMessage) {
         super(detailMessage);
     }
 }

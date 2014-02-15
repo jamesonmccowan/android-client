@@ -54,7 +54,12 @@ public class RouteTracker {
      * <code>RouteTracker<code/> constructor. This procedure initializes the class instance,
      * and copies references to the LocationManager and PowerManager instances instantiated
      * by the main application.
-     * @throws RouteTrackerException
+     * @throws RouteTrackerExceptionMemory
+     * @throws RouteTrackerExceptionBadArgAccuracy
+     * @throws RouteTrackerExceptionBadArgBearing
+     * @throws RouteTrackerExceptionSecurity
+     * @throws RouteTrackerExceptionNoProvider
+     * @throws RouteTrackerExceptionWakeLock
      */
     public void Init() {
 
@@ -62,7 +67,7 @@ public class RouteTracker {
 
         // create Criteria object to specify location provider's settings
         if (null == (criteria = new Criteria())) {
-            throw new RouteTrackerException(RouteTrackerException.Error.ERR_OUT_OF_MEM);
+            throw new RouteTrackerExceptionMemory();
         }
 
         // fine location data (throws java.lang.IllegalArgumentException)
@@ -70,7 +75,7 @@ public class RouteTracker {
             criteria.setAccuracy(Criteria.ACCURACY_FINE);
         }
         catch(IllegalArgumentException ex) {
-            throw new RouteTrackerException(RouteTrackerException.Error.ERR_BAD_ARG_ACCURACY, ex.getMessage());
+            throw new RouteTrackerExceptionBadArgAccuracy();
         }
 
         // need bearing to rotate map (throws java.lang.IllegalArgumentException)
@@ -78,7 +83,7 @@ public class RouteTracker {
             criteria.setBearingRequired(true);
         }
         catch(IllegalArgumentException ex) {
-            throw new RouteTrackerException(RouteTrackerException.Error.ERR_BAD_ARG_BEARING, ex.getMessage());
+            throw new RouteTrackerExceptionBadArgBearing();
         }
 
         criteria.setCostAllowed(true); // OK to incur monetary cost
@@ -90,27 +95,31 @@ public class RouteTracker {
             locationManager.addGpsStatusListener(gpsStatusListener);
         }
         catch(SecurityException ex) {
-            throw new RouteTrackerException(RouteTrackerException.Error.ERR_SECURITY, ex.getMessage());
+            throw new RouteTrackerExceptionSecurity();
         }
 
         // get the best provider based on our Criteria
         try {
-            if (null == (provider = locationManager.getBestProvider(criteria, true))) {
-                throw new RouteTrackerException(RouteTrackerException.Error.ERR_NO_PROVIDER);
-            }
+            provider = locationManager.getBestProvider(criteria, true);
         }
         catch(Exception ex) {
-            throw new RouteTrackerException(RouteTrackerException.Error.ERR_NO_PROVIDER, ex.getMessage());
+            throw new RouteTrackerExceptionNoProvider();
+        }
+
+        if (null == provider) {
+            throw new RouteTrackerExceptionNoProvider();
         }
 
         // get a wakelock preventing the device from sleeping
         try {
-            if (null == (wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "No sleep"))) {
-                throw new RouteTrackerException(RouteTrackerException.Error.ERR_WAKELOCK);
-            }
+            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "No sleep");
         }
         catch(Exception ex) {
-            throw new RouteTrackerException(RouteTrackerException.Error.ERR_WAKELOCK, ex.getMessage());
+            throw new RouteTrackerExceptionWakeLock();
+        }
+
+        if (null == wakeLock) {
+            throw new RouteTrackerExceptionWakeLock();
         }
     }
 
@@ -134,7 +143,7 @@ public class RouteTracker {
             isTracking = true;
         }
         catch(IllegalArgumentException ex) {
-            throw new RouteTrackerException(RouteTrackerException.Error.ERR_BAD_REQUEST_UPDATES, ex.getMessage());
+            throw new RouteTrackerException();
         }
     }
 
@@ -152,7 +161,7 @@ public class RouteTracker {
             locationManager.removeUpdates(locationListener);
         }
         catch(IllegalArgumentException ex) {
-            throw new RouteTrackerException(RouteTrackerException.Error.ERR_BAD_ARG_REMOVE_UPDATES, ex.getMessage());
+            throw new RouteTrackerException();
         }
         finally {
             // Release the wakelock

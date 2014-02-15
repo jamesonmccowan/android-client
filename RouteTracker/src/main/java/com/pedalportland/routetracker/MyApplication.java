@@ -91,8 +91,33 @@ public class MyApplication extends Application {
         try {
             routeTracker.Init();
         }
-        catch(RouteTrackerException ex) {
-            setInitErrorMessage(getResources().getString(R.string.rt_error), ex.getError());
+        catch(RouteTrackerExceptionMemory ex) {
+            setInitErrorMessage(getResources().getString(R.string.rt_error_out_of_mem));
+            routeTracker = null;
+            return;
+        }
+        catch(RouteTrackerExceptionBadArgAccuracy ex) {
+            setInitErrorMessage(getResources().getString(R.string.rt_error_bad_arg_accuracy));
+            routeTracker = null;
+            return;
+        }
+        catch(RouteTrackerExceptionBadArgBearing ex) {
+            setInitErrorMessage(getResources().getString(R.string.rt_error_bad_arg_bearing));
+            routeTracker = null;
+            return;
+        }
+        catch(RouteTrackerExceptionSecurity ex) {
+            setInitErrorMessage(getResources().getString(R.string.rt_error_security));
+            routeTracker = null;
+            return;
+        }
+        catch(RouteTrackerExceptionNoProvider ex) {
+            setInitErrorMessage(getResources().getString(R.string.rt_error_no_provider));
+            routeTracker = null;
+            return;
+        }
+        catch(RouteTrackerExceptionWakeLock ex) {
+            setInitErrorMessage(getResources().getString(R.string.rt_error_wakelock));
             routeTracker = null;
             return;
         }
@@ -105,13 +130,6 @@ public class MyApplication extends Application {
         catch(NullPointerException ex) {
             setInitErrorMessage(getResources().getString(R.string.du_null_pointer));
         }
-    }
-
-    /**
-     * Sets the modules exception message.
-     */
-    private void setInitErrorMessage(String message, RouteTrackerException.Error error) {
-        setInitErrorMessage(String.format("%s (%d)", message, error.value()));
     }
 
     /**

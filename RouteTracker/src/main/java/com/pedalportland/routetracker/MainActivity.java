@@ -337,34 +337,42 @@ public class MainActivity extends Activity {
                 }
                 else {
                     if (isChecked) {
+                        try {
                         // Start the route tracking
                         routeTracker.startTracking();
+                        }
+                        catch(RouteTrackerException ex) {
+                            ErrorDialog(R.string.rt_error_start);
+                            buttonView.setChecked(false);
+                        }
                     }
                     else {
-                        // Stop the route tracking
-                        routeTracker.stopTracking();
+                        try {
+                            // Stop the route tracking
+                            routeTracker.stopTracking();
 
-                        // Get the route information
-                        RouteCalculator route = routeTracker.getRoute();
+                            // Get the route information
+                            RouteCalculator route = routeTracker.getRoute();
 
-                        if (null == route) {
-                            // Tell the user that something went wrong with the route information.
-                            ErrorDialog(R.string.err_no_route_data);
-                        }
-                        else {
-                            // Show the route results to the user.
-                            showResult(route);
-
-                            // Upload the route data
-                            if (null != dataUploader) {
-                                dataUploader.UploadData(route.getRoute());
+                            if (null == route) {
+                                // Tell the user that something went wrong with the route information.
+                                ErrorDialog(R.string.err_no_route_data);
                             }
+                            else {
+                                // Show the route results to the user.
+                                showResult(route);
+
+                                // Upload the route data
+                                if (null != dataUploader) {
+                                    dataUploader.UploadData(route.getRoute());
+                                }
+                            }
+                        }
+                        catch(RouteTrackerException ex) {
+                            ErrorDialog(R.string.rt_error_stop);
                         }
                     }
                 }
-            }
-            catch(RouteTrackerException ex) {
-                ErrorDialog(ex.getError());
             }
             catch(Exception ex) {
                 Log.e(MODULE_TAG, ex.getMessage());
@@ -393,10 +401,6 @@ public class MainActivity extends Activity {
                 Log.e(MODULE_TAG, ex.getMessage());
             }
         }
-    }
-
-    private void ErrorDialog(RouteTrackerException.Error error) {
-        ErrorDialog(String.format("%s (%d)", getResources().getString(R.string.rt_error), error.value()));
     }
 
     private void ErrorDialog(int messageId) {

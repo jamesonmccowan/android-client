@@ -20,7 +20,14 @@
     <string name="ex_no_location_mgr">Application could not acquire access to LocationManager</string>
     <string name="ex_no_power_mgr">Application could not acquire access to PowerManager</string>
     <string name="ex_error_out_of_memory">Could not initialize RouteTracker (Out of Memory!)</string>
-    <string name="rt_error">Could not initialize RouteTracker</string>
+    <string name="rt_error_out_of_mem">Could not initialize RouteTracker: Out of Memory</string>
+    <string name="rt_error_bad_arg_accuracy">Could not initialize RouteTracker: Bad accuracy parameters</string>
+    <string name="rt_error_bad_arg_bearing">Could not initialize RouteTracker: Bad bearing parameters</string>
+    <string name="rt_error_security">Could not initialize RouteTracker: security permission not given</string>
+    <string name="rt_error_no_provider">Could not initialize RouteTracker: No location provider found</string>
+    <string name="rt_error_wakelock">Could not initialize RouteTracker: PowerManager Service not responding</string>
+    <string name="rt_error_start">Not able to start tracking</string>
+    <string name="rt_error_stop">Error(s) encountered while stopping tracking</string>
     <string name="du_null_pointer">DataUploader detected null parameters</string>
 
 </resources>
