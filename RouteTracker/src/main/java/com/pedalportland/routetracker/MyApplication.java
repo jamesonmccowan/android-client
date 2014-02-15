@@ -100,7 +100,7 @@ public class MyApplication extends Application {
         // create a DataUploader object and maintain a reference to it
         try {
             dataUploader = new DataUploader(
-                getResources().getString(R.string.default_pedal_portland_uri));
+                getResources().getString(R.string.default_pedal_portland_url));
         }
         catch(NullPointerException ex) {
             setInitErrorMessage(getResources().getString(R.string.du_null_pointer));
