@@ -1,7 +1,6 @@
 package com.pedalportland.routetracker;
 
 import android.location.Location;
-
 import org.joda.time.DateTime;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -45,7 +44,7 @@ public class DataUploader extends Thread {
 
         for(Location point : locations) {
             JSONObject obj = new JSONObject();
-            obj.put("time", (new DateTime(point.getTime())).toString("yyyy-MM-dd'T'HH:mm:ssZZ")); // convert from UTC time, in milliseconds since January 1, 1970 to ISO 8601
+            obj.put("time", (new DateTime(point.getTime())).toString()); // convert from UTC time, in milliseconds since January 1, 1970 to ISO 8601
             obj.put("latitude", point.getLatitude());
             obj.put("longitude", point.getLongitude());
             obj.put("accuracy", point.getAccuracy());
