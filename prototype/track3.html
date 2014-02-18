@@ -1,0 +1,87 @@
+<head>
+  <meta charset="utf-8">
+  <title>Start Menu - tracking</title>
+
+  <link type="text/css" rel="stylesheet" href="global.css" />
+  <style type="text/css">
+.bot	{position: absolute;
+	bottom: 0px;
+	left: 0px;
+	width: 100%;}
+  </style>
+
+  <script type="text/javascript">
+
+function onStart() {
+  var step = 0.00003;
+  var dist = document.getElementById("distance");
+  dist.innerHTML = (Number(dist.innerHTML) + step).toPrecision(6);
+
+  var ms1 = document.getElementById("miliseconds1");
+  var ms2 = document.getElementById("miliseconds2");
+  var s1 = document.getElementById("seconds1");
+  var s2 = document.getElementById("seconds2");
+  var m1 = document.getElementById("minutes1");
+  var m2 = document.getElementById("minutes2");
+  
+  if (Number(ms1.innerHTML)==9) {
+    ms1.innerHTML = 0;
+    if (Number(ms2.innerHTML)==9) {
+      ms2.innerHTML = 0;
+      if (Number(s1.innerHTML)==9) {
+        s1.innerHTML = 0;
+        if (Number(s2.innerHTML)==5) {
+          s2.innerHTML = 0;
+          if (Number(m1.innerHTML)==9) {
+            m1.innerHTML = 0;
+            m2.innerHTML = Number(m2.innerHTML)+1;
+          } else {
+            m1.innerHTML=Number(m1.innerHTML)+1;
+	  }
+        } else {
+          s2.innerHTML=Number(s2.innerHTML)+1;
+        }
+      } else {
+        s1.innerHTML=Number(s1.innerHTML)+1;
+      }
+    } else {
+      ms2.innerHTML=Number(ms2.innerHTML)+1;
+    }
+  } else {
+    ms1.innerHTML=Number(ms1.innerHTML)+1;
+  }
+  setTimeout("onStart()",10);
+}
+  </script>
+</head>
+<body onload="onStart();">
+  <h2>Pedal PDX</h2>
+  <p>Time:<br /><span id="minutes2">0</span><span id="minutes1">0</span>:<span id="seconds2">0</span><span id="seconds1">0</span>:<span id="miliseconds2">0</span><span id="miliseconds1">0</span></p>
+  <p>Distance: <span id="distance"></span> Miles</p>
+  <p>Average Speed: 10.5 MPH</p>
+  <p>Top Speed: 20.1 MPH</p>
+
+
+  <div class="bot">
+    <hr />
+    <table>
+      <tr>
+        <td colspan="3">Clip From start</td>
+      </tr><tr>
+        <td><button style="width: 100%;"><</button></td>
+        <td>1/4 miles</td>
+        <td><button style="width: 100%;">></button></td>
+      </tr><tr>
+        <td colspan="3"><hr /></td>
+      </tr><tr>
+        <td colspan="3">Clip From end</td>
+      </tr><tr>
+        <td><button style="width: 100%;"><</button></td>
+        <td>1/4 miles</td>
+        <td><button style="width: 100%;">></button></td>
+      </tr>
+    </table><hr />
+    <button onclick='location.href="start3.html"' style="width: 100%;height: 1cm;">Stop Trip</button>
+  </div>
+</body>
+</html>
