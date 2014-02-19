@@ -53,7 +53,7 @@ public class DataUploader extends Thread {
         JSONObject route = new JSONObject();
         route.put("points", points);
         route.put("version", version);
-        route.put("id", locations.hashCode());
+        route.put("hash", locations.hashCode());
 
         return route.toString();
     }
