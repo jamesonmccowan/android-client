@@ -1,0 +1,42 @@
+body	{background: #0099CC;
+	color: white;
+	text-align: center;
+	font-family: arial;}
+
+a img	{border-width: 1px;}
+
+h2	{color: #44ccee;/*#33b5e5;*/
+	font-family: impact;
+	font-weight: normal;}
+
+button	{border-radius: 0px;
+	border: 1px solid #002255; /*#2F748A;*/
+	color: white;
+	background: #3D7486;
+	padding: 5px 10px;}
+
+.box	{width: 2.3in;
+	height: 2.3in;
+	margin: auto;
+	background: white;
+	overflow: hidden;}
+
+table	{border-collapse: collapse;
+	width: 100%;}
+
+.box td, .box th, .box {
+	border: 1px solid #2F748A;
+	color: #2F748A;}
+
+.bot td	{text-align: center;}
+
+/*.bot table, .bot hr {display: none;}*/
+
+hr	{border-top: 1px solid #2F748A;
+	border-bottom: 1px solid #49a;
+	border-left: 0px;
+	border-right: 0px;}
+
+
+
+

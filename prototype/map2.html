@@ -1,0 +1,54 @@
+<head>
+  <meta charset="utf-8">
+  <title>Map</title>
+
+  <link type="text/css" rel="stylesheet" href="global.css" />
+  <style type="text/css">
+canvas	{width: 100%;
+	height: 100%;}
+
+#pos	{color: white;}
+
+#screen {width: 5in;}
+  </style>
+
+  <script type="text/javascript" src="general.js"></script>
+  <script type="text/javascript" src="map.js"></script>
+  <script type="text/javascript">
+var bend =     makePosition(44.056389, -121.308056, 1338, 1372);
+var oakridge = makePosition(43.746111, -122.463333, 879, 1546);
+
+var longBeach = makePosition(46.350833, -124.053611, 293, 92);
+var mcdermitt = makePosition(41.9975, -117.718333, 2793, 2478);
+
+var portland  = makePosition(45.52, -122.681944, 828, 581);
+var hillsboro = makePosition(45.523056, -122.988333, 693, 570);
+
+map = MakeMap("oregon.jpg", hillsboro, portland);
+
+map.addPoint(hillsboro.coords.latitude, hillsboro.coords.longitude);
+map.addPoint(portland.coords.latitude, portland.coords.longitude);
+//map.addPoint(bend.coords.latitude, bend.coords.longitude);
+//map.addPoint(oakridge.coords.latitude, oakridge.coords.longitude);
+//map.addPoint(longBeach.coords.latitude, longBeach.coords.longitude);
+//map.addPoint(mcdermitt.coords.latitude, mcdermitt.coords.longitude);
+
+function circle() {
+    var c=document.getElementById("map");
+    var ctx=c.getContext("2d");
+    ctx.beginPath();
+    ctx.arc(100,75,5,0,2*Math.PI);
+    ctx.fillStyle="red";
+    ctx.fill();
+}
+  </script>
+</head>
+<body onload="onload()">
+  <div id="frame"><div id="frame_padding"><div id="screen">
+    <canvas id="map"></canvas>
+  </div></div></div>
+  <div id="pos"></div>
+  <button onclick="circle();">Circle</button>
+  <img src="oregon.jpg" id="oregon" style="display: none;" />
+</body>
+</html>

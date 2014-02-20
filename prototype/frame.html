@@ -1,0 +1,88 @@
+<head>
+  <meta charset="utf-8">
+  <title>Home Screen</title>
+
+  <base target="screen" />
+  <style type="text/css">
+body	{color: white;
+	background: black;}
+
+table	{margin: auto;}
+
+td	{width: 3in;
+	border: 1px solid white;
+	vertical-align: top;
+	text-align: center;}
+
+body	{background: black;
+	text-align: center;
+	font-family: arial;}
+
+#frame	{background: #ccc;
+	display: table;
+	padding: 5mm 3mm;
+	margin: auto;
+	border-radius: 5mm;}
+
+#frame_padding	{
+	background: black;
+	padding: 0.5mm;
+	display: table;}
+
+#screen	{width: 2.5in;
+	height: 5.0in;
+	overflow: hidden;
+	border: 0px;}
+  </style>
+  
+  <script type="text/javascript">
+
+  </script>
+</head>
+<body>
+  <table>
+    <tr>
+      <td>
+        <ul>
+          <li><a href="start1.html">Start Page v1</a></li>
+          <li><a href="start2.html">Start Page v2</a></li>
+          <li><a href="start3.html">Start Page v3</a></li>
+        </ul>
+        <ul>
+          <li><a href="track1.html">Start Page - track v1</a></li>
+          <li><a href="track2.html">Start Page - track  v2</a></li>
+          <li><a href="track3.html">Start Page - track  v3</a></li>
+          <li><a href="track4.html">Start Page - track  v4</a></li>
+        </ul>
+        <ul>
+          <li><a href="lifetime1.html">Lifetime v1</a></li>
+          <li><a href="lifetime2.html">Lifetime v2</a></li>
+        </ul>
+        <ul>
+          <li><a href="rideList1.html">Ride List v1</a></li>
+          <li><a href="rideList2.html">Ride List v2</a></li>
+        </ul>
+        <ul>
+          <li><a href="rideDetail1.html">Ride Details v1</a></li>
+          <li><a href="rideDetail2.html">Ride Details v2</a></li>
+        </ul>
+      </td><td>
+        <div id="frame">
+          <div id="frame_padding">
+            <iframe id="screen" name="screen" src="start2.html"></iframe>
+          </div>
+        </div>
+      </td><td>
+<textarea style="width: 100%; height: 5in;">
+screen layout
+  start screen - start (distance chooser), end (distance chooser), start ride button, something motivational, link to past rides
+    measure calories in food, such as donut, energy drink, or burrito
+  lifetime screen - list of stats for all rides
+  ride list screen - list of rides with date, time, distance, and maybe someday a name; each is a link to a ride detail screen
+  ride detail screen - list of stats for the ride
+</textarea>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
