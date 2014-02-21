@@ -1,11 +1,14 @@
 package com.pedalportland.routetracker;
 
+
 import com.pedalportland.routetracker.util.SystemUiHider;
+
 
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Criteria;
 import android.location.GpsStatus;
 import android.location.Location;
@@ -18,10 +21,12 @@ import android.os.PowerManager;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.util.Log;
+
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -36,11 +41,13 @@ public class MainActivity extends Activity {
      */
     private static final boolean AUTO_HIDE = true;
 
+
     /**
      * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
      * user interaction before hiding the system UI.
      */
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
+
 
     /**
      * If set, will toggle the system UI visibility upon interaction. Otherwise,
@@ -48,15 +55,18 @@ public class MainActivity extends Activity {
      */
     private static final boolean TOGGLE_ON_CLICK = true;
 
+
     /**
      * The flags to pass to {@link SystemUiHider#getInstance}.
      */
     private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
 
+
     /**
      * The instance of the {@link SystemUiHider} for this activity.
      */
     private SystemUiHider mSystemUiHider;
+
 
     private LocationManager locationManager;                            // gives location data
     private boolean tracking;                                           // whether app is currently tracking
@@ -66,51 +76,77 @@ public class MainActivity extends Activity {
     private static final String MODULE_TAG = "MainActivity";
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         setContentView(R.layout.activity_main);
+
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.fullscreen_content);
+        Button maps = (Button) findViewById(R.id.maps);
+
 
         // ------------------------------------------------------------------------------
         // Set up an instance of SystemUiHider to control the system UI for this activity
         // ------------------------------------------------------------------------------
 
+
         mSystemUiHider = SystemUiHider.getInstance(this, contentView, HIDER_FLAGS);
         mSystemUiHider.setup();
         mSystemUiHider.setOnVisibilityChangeListener(new View_OnVisibilityChangeListener(controlsView));
 
+
         // Set up the user interaction to manually show or hide the system UI.
         contentView.setOnClickListener(new ContentView_ViewOnClickListener());
+
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
         ToggleButton trackingToggleButton = (ToggleButton) findViewById(R.id.trackingToggleButton);
 
+
         trackingToggleButton.setOnTouchListener(mDelayHideTouchListener);
+
 
         // register listener for trackingToggleButton
         trackingToggleButton.setOnCheckedChangeListener(trackingToggleButtonListener);
+
+
+        maps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), Maps.class);
+                startActivityForResult(intent, 0);
+            }
+        });
     }
+
 
     // listener for trackingToggleButton's events
     CompoundButton.OnCheckedChangeListener trackingToggleButtonListener =
             new CompoundButton_MyOnCheckedChangeListener();
 
 
+
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
+
 
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
         delayedHide(100);
     }
+
+
 
 
     /**
@@ -120,8 +156,10 @@ public class MainActivity extends Activity {
      */
     View.OnTouchListener mDelayHideTouchListener = new View_OnTouchListener();
 
+
     Handler mHideHandler = new Handler();
     Runnable mHideRunnable = new SystemUiHider_Runnable();
+
 
     /**
      * Schedules a call to hide() in [delay] milliseconds, canceling any
@@ -131,6 +169,7 @@ public class MainActivity extends Activity {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
 
     // ***************************************************************
     // * Function: onStart
@@ -142,6 +181,7 @@ public class MainActivity extends Activity {
         try {
             super.onStart(); // call super's onStart method
 
+
             // create Criteria object to specify location provider's settings
             Criteria criteria = new Criteria();
             criteria.setAccuracy(Criteria.ACCURACY_FINE); // fine location data
@@ -150,20 +190,26 @@ public class MainActivity extends Activity {
             criteria.setPowerRequirement(Criteria.POWER_LOW); // try to conserve
             criteria.setAltitudeRequired(false); // don't need altitude data
 
+
             // get the LocationManager
             locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
 
             // register listener to determine whether we have a GPS fix
             locationManager.addGpsStatusListener(gpsStatusListener);
 
+
             // get the best provider based on our Criteria
             String provider = locationManager.getBestProvider(criteria, true);
+
 
             // listen for changes in location as often as possible
             locationManager.requestLocationUpdates(provider, 0, 0, locationListener);
 
+
             // get the app's power manager
             PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+
 
             // get a wakelock preventing the device from sleeping
             wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "No sleep");
@@ -173,12 +219,15 @@ public class MainActivity extends Activity {
             Log.e(MODULE_TAG, ex.getMessage());
         }
 
+
     }
+
 
     // ********************************************************************
     // * Function: onStop
     // * Description: called when Activity is no longer visible to the user
     // ********************************************************************
+
 
     @Override
     public void onStop()
@@ -192,10 +241,12 @@ public class MainActivity extends Activity {
         }
     }
 
+
     // ********************************************************************
     // * Function: updateLocation
     // * Description: Receives location updates from location provider
     // ********************************************************************
+
 
     public void updateLocation(Location location)
     {
@@ -204,17 +255,22 @@ public class MainActivity extends Activity {
             routeCalculator.AddLocation(location);
         }
 
+
     }
+
 
     // ********************************************************************
     // * Function: GpsStatus.Listener (anonymous inner class)
     // * Description: determine whether we have GPS fix
     // ********************************************************************
 
+
     GpsStatus.Listener gpsStatusListener = new GpsStatus_MyGpsStatusListener();
+
 
     // responds to events from the LocationManager
     private final LocationListener locationListener = new LocationManager_LocationListener();
+
 
     /**
      * Inner Class: ContentView_ViewOnClickListener
@@ -232,6 +288,7 @@ public class MainActivity extends Activity {
         }
     }
 
+
     /**
      * Inner Class: LocationManager_LocationListener
      *
@@ -240,28 +297,34 @@ public class MainActivity extends Activity {
     private class LocationManager_LocationListener
             implements LocationListener {
 
+
         // when the location is changed
         public void onLocationChanged(Location location)
         {
             gpsFix = true; // if getting Locations, then we have a GPS fix
 
+
             if (tracking) // if we're currently tracking
                 updateLocation(location); // update the location
         } // end onLocationChanged
+
 
         public void onProviderDisabled(String provider)
         {
         } // end onProviderDisabled
 
+
         public void onProviderEnabled(String provider)
         {
         } // end onProviderEnabled
+
 
         public void onStatusChanged(String provider,
                                     int status, Bundle extras)
         {
         } // end onStatusChanged
     }
+
 
     /**
      * Inner Class: GpsStatus_MyGpsStatusListener
@@ -277,12 +340,14 @@ public class MainActivity extends Activity {
                 gpsFix = true;
                 Toast results = Toast.makeText(MainActivity.this, getResources().getString(R.string.toast_signal_acquired), Toast.LENGTH_SHORT);
 
+
                 // center the Toast in the screen
                 results.setGravity(Gravity.CENTER, results.getXOffset() / 2, results.getYOffset() / 2);
                 results.show(); // display the results
             }
         }
     }
+
 
     /**
      * Inner Class: View_OnVisibilityChangeListener
@@ -296,9 +361,11 @@ public class MainActivity extends Activity {
         int mControlsHeight;
         int mShortAnimTime;
 
+
         public View_OnVisibilityChangeListener(View controlsView) {
             this.controlsView = controlsView;
         }
+
 
         @Override
         @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
@@ -322,12 +389,14 @@ public class MainActivity extends Activity {
                 controlsView.setVisibility(visible ? View.VISIBLE : View.GONE);
             }
 
+
             if (visible && AUTO_HIDE) {
                 // Schedule a hide().
                 delayedHide(AUTO_HIDE_DELAY_MILLIS);
             }
         }
     }
+
 
     /**
      * Inner Class: View_OnVisibilityChangeListener
@@ -345,6 +414,7 @@ public class MainActivity extends Activity {
         }
     }
 
+
     /**
      * Inner Class: CompoundButton_MyOnCheckedChangeListener
      *
@@ -353,6 +423,7 @@ public class MainActivity extends Activity {
     private class CompoundButton_MyOnCheckedChangeListener
             implements CompoundButton.OnCheckedChangeListener {
         // called when user toggles tracking state
+
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
@@ -363,9 +434,11 @@ public class MainActivity extends Activity {
                 tracking = false; // just stopped tracking locations
                 routeCalculator.stop();
 
+
                 // create a dialog displaying the results
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
                 dialogBuilder.setTitle(R.string.results);
+
 
                 // display distanceTraveled traveled and average speed
                 dialogBuilder.setMessage(String.format(getResources().getString(R.string.results_format),
@@ -376,6 +449,7 @@ public class MainActivity extends Activity {
                 dialogBuilder.setPositiveButton(R.string.button_ok, null);
                 dialogBuilder.show(); // display the dialog
 
+
                 try {
                     // upload route
                     DataUploader dataUploader = new DataUploader(getResources().getString(R.string.default_pedal_portland_url));
@@ -383,7 +457,10 @@ public class MainActivity extends Activity {
                 }
                 catch(Exception ex) {
 
+
                 }
+
+
 
 
             } // end if
@@ -395,6 +472,7 @@ public class MainActivity extends Activity {
             } // end else
         } // end method onCheckChanged
     }
+
 
     /**
      * Inner Class: SystemUiHider_Runnable
@@ -408,3 +486,4 @@ public class MainActivity extends Activity {
         }
     }
 }
+
