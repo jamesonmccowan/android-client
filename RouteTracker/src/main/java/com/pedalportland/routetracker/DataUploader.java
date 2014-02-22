@@ -13,8 +13,8 @@ import java.util.List;
 
 /**
  * This class collects uploads route data to the portland observatory
- * @author Robin Murray
- * @version 1.0
+ * @author Robin Murray, Jameson McCowan
+ * @version 1.5
  */
 public class DataUploader extends Thread {
 
@@ -27,7 +27,7 @@ public class DataUploader extends Thread {
      */
     public DataUploader(String pdxObservatory) {
         url = pdxObservatory;
-        version = "0.3";
+        version = "0.4";
     }
 
     /**
@@ -35,8 +35,10 @@ public class DataUploader extends Thread {
      * @param locations The route data.
      */
     public void UploadData(List<Location> locations) {
-        this.locations = locations;
-        this.start();
+        if(!locations.isEmpty()) {
+            this.locations = locations;
+            this.start();
+        }
     }
 
     private String toJSON(List<Location> locations) {
@@ -60,21 +62,20 @@ public class DataUploader extends Thread {
 
     @Override
     public void run() {
+        int logSleep = 1;
         while(locations != null) {
-            HttpURLConnection connection;
+            HttpURLConnection connection = null;
             OutputStreamWriter request;
 
             URL url;
             String response;
-            String json = toJSON(locations);
-            String parameters = "json="+json;
+            String parameters = toJSON(locations);
 
-            try
-            {
+            try {
                 url = new URL(this.url);
                 connection = (HttpURLConnection) url.openConnection();
                 connection.setDoOutput(true);
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestProperty("Content-Type", "application/json");
                 connection.setRequestMethod("POST");
 
                 request = new OutputStreamWriter(connection.getOutputStream());
@@ -99,7 +100,8 @@ public class DataUploader extends Thread {
             }
             catch(Exception ex) {
                 try {
-                    sleep(1000);
+                    logSleep *= 2;
+                    sleep(1000 * logSleep);
                 }
                 catch ( InterruptedException e ) {
 
