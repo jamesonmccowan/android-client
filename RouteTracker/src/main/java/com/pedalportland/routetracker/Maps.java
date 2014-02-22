@@ -26,10 +26,11 @@ import java.util.Arrays;
  */
 public class Maps extends Activity {
 
-    Double[] position = {45.512, 122.685, 45.519, 122.679,
-            46.589, 123.692, 50.789, 125.456, 43.996, 121.426, 45.514, 122.687};
-    LatLng PORTLANDSU = new LatLng(45.512, 122.685);
-    LatLng PORTLANDSQ = new LatLng(45.519, 122.679);
+    Double[] position = {45.49216607, -122.79390729, 45.49212721, -122.79416967,
+            45.49209675, -122.79431325, 45.49201231, -122.79448298,
+            45.49242192, -122.79465708, 45.4927973, -122.79473063};
+    LatLng PORTLANDSU = new LatLng(45.49216607, -122.79390729);
+    LatLng PORTLANDSQ = new LatLng(45.49212721, -122.79416967);
 
     int test = 0;
     LatLng[] point = new LatLng[2];
