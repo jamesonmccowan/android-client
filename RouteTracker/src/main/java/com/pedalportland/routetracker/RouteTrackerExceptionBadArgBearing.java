@@ -30,4 +30,16 @@ public class RouteTrackerExceptionBadArgBearing extends RuntimeException  {
     public RouteTrackerExceptionBadArgBearing(String detailMessage) {
         super(detailMessage);
     }
+
+    /**
+     * Constructs a new {@code RouteTrackerExceptionBadArgBearing} with the current stack
+     * trace and the specified cause.
+     *
+     * @param cause
+     *            the cause of this exception, may be {@code null}.
+     * @since 1.5
+     */
+    public RouteTrackerExceptionBadArgBearing(Throwable cause) {
+        super((cause == null ? null : cause.toString()), cause);
+    }
 }

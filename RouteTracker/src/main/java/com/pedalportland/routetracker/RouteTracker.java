@@ -75,7 +75,7 @@ public class RouteTracker {
             criteria.setAccuracy(Criteria.ACCURACY_FINE);
         }
         catch(IllegalArgumentException ex) {
-            throw new RouteTrackerExceptionBadArgAccuracy();
+            throw new RouteTrackerExceptionBadArgAccuracy(ex);
         }
 
         // need bearing to rotate map (throws java.lang.IllegalArgumentException)
@@ -83,7 +83,7 @@ public class RouteTracker {
             criteria.setBearingRequired(true);
         }
         catch(IllegalArgumentException ex) {
-            throw new RouteTrackerExceptionBadArgBearing();
+            throw new RouteTrackerExceptionBadArgBearing(ex);
         }
 
         criteria.setCostAllowed(true); // OK to incur monetary cost
@@ -95,17 +95,11 @@ public class RouteTracker {
             locationManager.addGpsStatusListener(gpsStatusListener);
         }
         catch(SecurityException ex) {
-            throw new RouteTrackerExceptionSecurity();
+            throw new RouteTrackerExceptionSecurity(ex);
         }
 
         // get the best provider based on our Criteria
-        try {
-            provider = locationManager.getBestProvider(criteria, true);
-        }
-        catch(Exception ex) {
-            throw new RouteTrackerExceptionNoProvider();
-        }
-
+        provider = locationManager.getBestProvider(criteria, true);
         if (null == provider) {
             throw new RouteTrackerExceptionNoProvider();
         }
@@ -115,11 +109,7 @@ public class RouteTracker {
             wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "No sleep");
         }
         catch(Exception ex) {
-            throw new RouteTrackerExceptionWakeLock();
-        }
-
-        if (null == wakeLock) {
-            throw new RouteTrackerExceptionWakeLock();
+            throw new RouteTrackerExceptionWakeLock(ex);
         }
     }
 
@@ -143,7 +133,7 @@ public class RouteTracker {
             isTracking = true;
         }
         catch(IllegalArgumentException ex) {
-            throw new RouteTrackerException();
+            throw new RouteTrackerException(ex);
         }
     }
 
@@ -161,7 +151,7 @@ public class RouteTracker {
             locationManager.removeUpdates(locationListener);
         }
         catch(IllegalArgumentException ex) {
-            throw new RouteTrackerException();
+            throw new RouteTrackerException(ex);
         }
         finally {
             // Release the wakelock

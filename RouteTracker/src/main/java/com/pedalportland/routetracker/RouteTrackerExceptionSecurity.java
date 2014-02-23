@@ -30,4 +30,16 @@ public class RouteTrackerExceptionSecurity extends RuntimeException  {
     public RouteTrackerExceptionSecurity(String detailMessage) {
         super(detailMessage);
     }
+
+    /**
+     * Constructs a new {@code RouteTrackerExceptionSecurity} with the current stack trace
+     * and the specified cause.
+     *
+     * @param cause
+     *            the optional cause of this exception, may be {@code null}.
+     * @since 1.5
+     */
+    public RouteTrackerExceptionSecurity(Throwable cause) {
+        super((cause == null ? null : cause.toString()), cause);
+    }
 }
