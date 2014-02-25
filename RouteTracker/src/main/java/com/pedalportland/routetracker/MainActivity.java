@@ -5,29 +5,25 @@ import com.pedalportland.routetracker.util.SystemUiHider;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
-import android.location.Criteria;
-import android.location.GpsStatus;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.PowerManager;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.util.Log;
 
 /**
- * An example full-screen activity that shows and hides the system UI (i.e.
+ * This class extends the <code>Activity<code/> class, and implements
+ * a full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  *
+ * @author robin5 (Robin Murray)
+ * @version 1.0
+ * @see <code>Activity<code/> class.
  * @see SystemUiHider
+ * created 1/3/14
  */
 public class MainActivity extends Activity {
     /**
@@ -58,14 +54,15 @@ public class MainActivity extends Activity {
      */
     private SystemUiHider mSystemUiHider;
 
-    private LocationManager locationManager;                            // gives location data
-    private boolean tracking;                                           // whether app is currently tracking
-    private PowerManager.WakeLock wakeLock; // used to prevent device sleep
-    private boolean gpsFix; // whether we have a GPS fix for accurate data
-    private RouteCalculator routeCalculator = new RouteCalculator();
     private static final String MODULE_TAG = "MainActivity";
 
+    private MyApplication myApp = null;
+    private RouteTracker routeTracker = null;
+    private DataUploader dataUploader = null;
 
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,10 +72,7 @@ public class MainActivity extends Activity {
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.fullscreen_content);
 
-        // ------------------------------------------------------------------------------
         // Set up an instance of SystemUiHider to control the system UI for this activity
-        // ------------------------------------------------------------------------------
-
         mSystemUiHider = SystemUiHider.getInstance(this, contentView, HIDER_FLAGS);
         mSystemUiHider.setup();
         mSystemUiHider.setOnVisibilityChangeListener(new View_OnVisibilityChangeListener(controlsView));
@@ -93,6 +87,19 @@ public class MainActivity extends Activity {
 
         trackingToggleButton.setOnTouchListener(mDelayHideTouchListener);
 
+        if (null != (myApp = MyApplication.getInstance())) {
+
+            // Initialize reference to RouteTracker
+            routeTracker = myApp.getRouteTracker();
+            if (null != routeTracker) {
+                // Set button to match tracking state
+                trackingToggleButton.setChecked(routeTracker.isTracking());
+            }
+
+            // Initialize reference to DataUploader
+            dataUploader = myApp.getDataUploader();
+        }
+
         // register listener for trackingToggleButton
         trackingToggleButton.setOnCheckedChangeListener(trackingToggleButtonListener);
     }
@@ -100,7 +107,6 @@ public class MainActivity extends Activity {
     // listener for trackingToggleButton's events
     CompoundButton.OnCheckedChangeListener trackingToggleButtonListener =
             new CompoundButton_MyOnCheckedChangeListener();
-
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -111,7 +117,6 @@ public class MainActivity extends Activity {
         // are available.
         delayedHide(100);
     }
-
 
     /**
      * Touch listener to use for in-layout UI controls to delay hiding the
@@ -132,89 +137,102 @@ public class MainActivity extends Activity {
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
-    // ***************************************************************
-    // * Function: onStart
-    // * Description: called when Activity becoming visible to the user
-    // ***************************************************************
+    /**
+     * Called when the <code>activity<code/> is becoming visible to the user.
+     * Followed by <code>onResume()<code/> if the activity comes to the foreground,
+     * or <code>onStop(<code/>) if it becomes hidden.
+     * @see <code>onResume<code/> class.
+     * @see <code>onStop<code/> class.
+     */
     @Override
-    public void onStart()
-    {
+    public void onStart() {
         try {
             super.onStart(); // call super's onStart method
-
-            // create Criteria object to specify location provider's settings
-            Criteria criteria = new Criteria();
-            criteria.setAccuracy(Criteria.ACCURACY_FINE); // fine location data
-            criteria.setBearingRequired(true); // need bearing to rotate map
-            criteria.setCostAllowed(true); // OK to incur monetary cost
-            criteria.setPowerRequirement(Criteria.POWER_LOW); // try to conserve
-            criteria.setAltitudeRequired(false); // don't need altitude data
-
-            // get the LocationManager
-            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-            // register listener to determine whether we have a GPS fix
-            locationManager.addGpsStatusListener(gpsStatusListener);
-
-            // get the best provider based on our Criteria
-            String provider = locationManager.getBestProvider(criteria, true);
-
-            // listen for changes in location as often as possible
-            locationManager.requestLocationUpdates(provider, 0, 0, locationListener);
-
-            // get the app's power manager
-            PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-
-            // get a wakelock preventing the device from sleeping
-            wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "No sleep");
-            wakeLock.acquire(); // acquire the wake lock
         }
         catch (Exception ex){
             Log.e(MODULE_TAG, ex.getMessage());
         }
-
     }
 
-    // ********************************************************************
-    // * Function: onStop
-    // * Description: called when Activity is no longer visible to the user
-    // ********************************************************************
-
+    /**
+     * Called when the <code>activity<code/> will start interacting with the user. At this point
+     * the <code>activity<code/> is at the top of the <code>activity<code/> stack, with user
+     * input going to it.  Always followed by <code>onPause()<code/>.
+     * @see <code>onPause<code/> class.
+     */
     @Override
-    public void onStop()
-    {
+    public void onResume() {
+        try {
+            super.onResume(); // call the super method
+        }
+        catch (Exception ex){
+            Log.e(MODULE_TAG, ex.getMessage());
+        }
+    }
+
+    /**
+     * Called when the system is about to start resuming a previous <code>activity<code/>.
+     * Followed by either <code>onResume(<code/> if the <code>activity<code/> returns back
+     * to the front, or <code>onStop()<code/> if it becomes invisible to the user.
+     * @see <code>onResume<code/> class.
+     * @see <code>onStop<code/> class.
+     */
+    @Override
+    public void onPause() {
+        try {
+            super.onPause(); // call the super method
+        }
+        catch (Exception ex){
+            Log.e(MODULE_TAG, ex.getMessage());
+        }
+    }
+
+    /**
+     * Called when the <code>activity<code/> is no longer visible to the user, because another
+     * <code>activity<code/> has been resumed and is covering this one. This may happen either
+     * because a new <code>activity<code/> is being started, an existing one is being brought
+     * in front of this one, or this one is being destroyed.  Followed by either
+     * <code>onRestart<code/> if this <code>activity<code/> is coming back to interact with
+     * the user, or <code>onDestroy<code/> if this <code>activity<code/> is going away.
+     * @see <code>onRestart<code/> class.
+     * @see <code>onDestroy<code/> class.
+     */
+    @Override
+    public void onStop() {
         try {
             super.onStop(); // call the super method
-            wakeLock.release(); // release the wakelock
         }
         catch (Exception ex){
             Log.e(MODULE_TAG, ex.getMessage());
         }
     }
 
-    // ********************************************************************
-    // * Function: updateLocation
-    // * Description: Receives location updates from location provider
-    // ********************************************************************
-
-    public void updateLocation(Location location)
-    {
-        // location not null; have GPS fix
-        if (location != null && gpsFix) {
-            routeCalculator.AddLocation(location);
+    /**
+     * This is the final call received before the <code>activity<code/> is destroyed. This can
+     * happen either because the <code>activity<code/> is finishing (someone called
+     * <code>finish()<code/> on it, or because the system is temporarily destroying this instance
+     * of the <code>activity<code/> to save space. You can distinguish between these two scenarios
+     * with the <code>isFinishing()<code/> method.
+     * @see <code>finish<code/> class.
+     * @see <code>isFinishing<code/> class.
+     */
+    @Override
+    public void onDestroy() {
+        try {
+            // Check if currently tracking route. If so save it.
+            if (null != routeTracker) {
+                if (routeTracker.isTracking()) {
+                    routeTracker.stopTracking();
+                    RouteCalculator route = routeTracker.getRoute();
+                    //todo: save route for later processing.
+                }
+            }
+            super.onDestroy(); // call the super method
         }
-
+        catch (Exception ex){
+            Log.e(MODULE_TAG, ex.getMessage());
+        }
     }
-
-    // ********************************************************************
-    // * Function: GpsStatus.Listener (anonymous inner class)
-    // * Description: determine whether we have GPS fix
-    // ********************************************************************
-
-    GpsStatus.Listener gpsStatusListener = new GpsStatus_MyGpsStatusListener();
-
-    // responds to events from the LocationManager
-    private final LocationListener locationListener = new LocationManager_LocationListener();
 
     /**
      * Inner Class: ContentView_ViewOnClickListener
@@ -232,57 +250,6 @@ public class MainActivity extends Activity {
         }
     }
 
-    /**
-     * Inner Class: LocationManager_LocationListener
-     *
-     * Description:  Class handles LocationListener events for LocationManager
-     */
-    private class LocationManager_LocationListener
-            implements LocationListener {
-
-        // when the location is changed
-        public void onLocationChanged(Location location)
-        {
-            gpsFix = true; // if getting Locations, then we have a GPS fix
-
-            if (tracking) // if we're currently tracking
-                updateLocation(location); // update the location
-        } // end onLocationChanged
-
-        public void onProviderDisabled(String provider)
-        {
-        } // end onProviderDisabled
-
-        public void onProviderEnabled(String provider)
-        {
-        } // end onProviderEnabled
-
-        public void onStatusChanged(String provider,
-                                    int status, Bundle extras)
-        {
-        } // end onStatusChanged
-    }
-
-    /**
-     * Inner Class: GpsStatus_MyGpsStatusListener
-     *
-     * Description:  Class handles LocationListener events for GpsStatus
-     */
-    private class GpsStatus_MyGpsStatusListener
-            implements GpsStatus.Listener {
-        public void onGpsStatusChanged(int event)
-        {
-            if (event == GpsStatus.GPS_EVENT_FIRST_FIX)
-            {
-                gpsFix = true;
-                Toast results = Toast.makeText(MainActivity.this, getResources().getString(R.string.toast_signal_acquired), Toast.LENGTH_SHORT);
-
-                // center the Toast in the screen
-                results.setGravity(Gravity.CENTER, results.getXOffset() / 2, results.getYOffset() / 2);
-                results.show(); // display the results
-            }
-        }
-    }
 
     /**
      * Inner Class: View_OnVisibilityChangeListener
@@ -352,48 +319,118 @@ public class MainActivity extends Activity {
      */
     private class CompoundButton_MyOnCheckedChangeListener
             implements CompoundButton.OnCheckedChangeListener {
-        // called when user toggles tracking state
 
+        // called when user toggles tracking state
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
         {
-            // if app is currently tracking
-            if (!isChecked)
-            {
-                tracking = false; // just stopped tracking locations
-                routeCalculator.stop();
-
-                // create a dialog displaying the results
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
-                dialogBuilder.setTitle(R.string.results);
-
-                // display distanceTraveled traveled and average speed
-                dialogBuilder.setMessage(String.format(getResources().getString(R.string.results_format),
-                        routeCalculator.getDistanceKM(),
-                        routeCalculator.getDistanceMI(),
-                        routeCalculator.getSpeedKM(),
-                        routeCalculator.getSpeedMI()));
-                dialogBuilder.setPositiveButton(R.string.button_ok, null);
-                dialogBuilder.show(); // display the dialog
-
-                try {
-                    // upload route
-                    DataUploader dataUploader = new DataUploader(getResources().getString(R.string.default_pedal_portland_url));
-                    dataUploader.UploadData(routeCalculator.getRoute());
+            try {
+                if (null == routeTracker ) {
+                    String message;
+                    if (null != (message = myApp.getInitErrorMessage())) {
+                        ErrorDialog(message);
+                    }
+                    else {
+                        ErrorDialog(R.string.err_bad_route_tracker);
+                    }
+                    buttonView.setChecked(false);
                 }
-                catch(Exception ex) {
+                else {
+                    if (isChecked) {
+                        try {
+                        // Start the route tracking
+                        routeTracker.startTracking();
+                        }
+                        catch(RouteTrackerException ex) {
+                            ErrorDialog(R.string.rt_error_start);
+                            buttonView.setChecked(false);
+                        }
+                    }
+                    else {
+                        try {
+                            // Stop the route tracking
+                            routeTracker.stopTracking();
 
+                            // Get the route information
+                            RouteCalculator route = routeTracker.getRoute();
+
+                            if (null == route) {
+                                // Tell the user that something went wrong with the route information.
+                                ErrorDialog(R.string.err_no_route_data);
+                            }
+                            else {
+                                // Show the route results to the user.
+                                showResult(route);
+
+                                // Upload the route data
+                                if (null != dataUploader) {
+                                    dataUploader.UploadData(route.getRoute());
+                                }
+                            }
+                        }
+                        catch(RouteTrackerException ex) {
+                            ErrorDialog(R.string.rt_error_stop);
+                        }
+                    }
                 }
+            }
+            catch(Exception ex) {
+                Log.e(MODULE_TAG, ex.getMessage());
+            }
+        }
 
+        /**
+         * Shows the result of the route tracking to the user
+         */
+        private void showResult(RouteCalculator route) {
+            try {
+            // create a dialog displaying the results
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+            dialogBuilder.setTitle(R.string.results);
 
-            } // end if
-            else
-            {
-                tracking = true; // app is now tracking
-                //startTime = System.currentTimeMillis(); // get current time
-                routeCalculator.start();
-            } // end else
-        } // end method onCheckChanged
+            // display distanceTraveled traveled and average speed
+            dialogBuilder.setMessage(String.format(getResources().getString(R.string.results_format),
+                    route.getDistanceKM(),
+                    route.getDistanceMI(),
+                    route.getSpeedKM(),
+                    route.getSpeedMI()));
+            dialogBuilder.setPositiveButton(R.string.button_ok, null);
+            dialogBuilder.show(); // display the dialog
+            }
+            catch(Exception ex) {
+                Log.e(MODULE_TAG, ex.getMessage());
+            }
+        }
+    }
+
+    private void ErrorDialog(int messageId) {
+        ErrorDialog(getResources().getString(messageId));
+    }
+
+    private void ErrorDialog(String message) {
+
+        // create a dialog displaying the message
+        AlertDialog.Builder alertDialog;
+
+        if (null != (alertDialog = new AlertDialog.Builder(MainActivity.this))) {
+            alertDialog.setTitle(R.string.error_dialog_title);
+            alertDialog.setMessage(message);
+            alertDialog.setPositiveButton(R.string.button_ok, null);
+            alertDialog.show(); // display the dialog
+        }
+    }
+
+    private void InfoDialog(int messageId) {
+
+        // create a dialog displaying the message
+        AlertDialog.Builder alertDialog;
+
+        if (null != (alertDialog = new AlertDialog.Builder(MainActivity.this))) {
+            alertDialog.setTitle(R.string.info_dialog_title);
+            alertDialog.setMessage(getResources().getString(messageId));
+            alertDialog.setPositiveButton(R.string.button_ok, null);
+            alertDialog.show(); // display the dialog
+        }
     }
 
     /**
