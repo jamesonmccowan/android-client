@@ -10,7 +10,7 @@
     <string name="toast_signal_acquired">GPS signal acquired</string>
     <string name="toast_signal_lost">GPS signal lost</string>
     <string name="button_ok">OK</string>
-    <string name="default_pedal_portland_url">http://capstonedd.cs.pdx.edu:5001/rides</string>
+    <string name="default_pedal_portland_url">http://pedal.cs.pdx.edu:5001/rides</string>
     <string name="settings">Settings</string>
 
 </resources>
