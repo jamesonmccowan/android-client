@@ -1,7 +1,8 @@
 package com.pedalportland.routetracker;
 
-import android.app.Application;
+import android.app.*;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.location.LocationManager;
 import android.os.PowerManager;
@@ -45,6 +46,8 @@ public class MyApplication extends Application {
 
         LocationManager locationManager = null;
         PowerManager powerManager = null;
+        NotificationManager notificationManager = null;
+        Notification.Builder builder = null;
 
         myApp = this;
 
@@ -74,9 +77,18 @@ public class MyApplication extends Application {
             return;
         }
 
+        // Create a NotificationManager object
+        try {
+            notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        } catch (Exception ex) {
+            setInitErrorMessage(ex.getMessage());
+            return;
+        }
+
         // Create a RouteTracker object and maintain a reference to it
         try {
-            routeTracker = new RouteTracker(locationManager, powerManager);
+            routeTracker = new RouteTracker(locationManager, powerManager, notificationManager);
             if (null == routeTracker) {
                 setInitErrorMessage(getResources().getString(R.string.ex_error_out_of_memory));
                 return;
@@ -188,4 +200,5 @@ public class MyApplication extends Application {
     public DataUploader getDataUploader() {
         return dataUploader;
     }
+
 }

@@ -1,5 +1,10 @@
 package com.pedalportland.routetracker;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Intent;
 import android.os.Bundle;
 import android.location.Criteria;
 import android.location.LocationManager;
@@ -26,6 +31,8 @@ public class RouteTracker {
     private boolean gpsFix;                         // whether we have a GPS fix for accurate data
     private RouteCalculator route = new RouteCalculator();
     private String provider = null;
+    private NotificationManager notificationManager = null;
+    private Notification.Builder builder = null;
 
     /**
      * <code>RouteTracker<code/> constructor. This procedure initializes the class instance,
@@ -33,7 +40,8 @@ public class RouteTracker {
      * by the main application.
      * @throws NullPointerException
      */
-    public RouteTracker(LocationManager locationManager, PowerManager powerManager) {
+    public RouteTracker(LocationManager locationManager, PowerManager powerManager,
+                        NotificationManager notificationManager) {
 
         if (null == locationManager) {
             throw new NullPointerException();
@@ -43,11 +51,19 @@ public class RouteTracker {
             throw new NullPointerException();
         }
 
+        if (null == notificationManager){
+            throw new NullPointerException();
+        }
+
         // Copy reference to LocationManager
         this.locationManager = locationManager;
 
         // Copy reference to PowerManager
         this.powerManager = powerManager;
+
+        this.notificationManager = notificationManager;
+
+        this.builder = builder;
     }
 
     /**
@@ -111,6 +127,28 @@ public class RouteTracker {
         catch(Exception ex) {
             throw new RouteTrackerExceptionWakeLock(ex);
         }
+
+        try {
+            builder = new Notification.Builder(MyApplication.getInstance());
+            builder.setSmallIcon(R.drawable.pedal_portland)
+                    .setContentTitle("PedalPDX")
+                    .setContentText("Application actively collecting location data")
+                    .setWhen(System.currentTimeMillis());
+
+//            Intent resultIntent = new Intent(MyApplication.getInstance(), MainActivity.class);
+//            TaskStackBuilder stackBuilder = TaskStackBuilder.create(MyApplication.getInstance());
+//            // Adds the back stack for the Intent (but not the Intent itself)
+//            stackBuilder.addParentStack(MainActivity.class);
+//            // Adds the Intent that starts the Activity to the top of the stack
+//            stackBuilder.addNextIntent(resultIntent);
+//            PendingIntent resultPendingIntent =
+//                    stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
+//            builder.setContentIntent(resultPendingIntent);
+//            builder.setOngoing(true);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -124,6 +162,7 @@ public class RouteTracker {
 
         // Reset route information
         route.start();
+        notificationManager.notify(0, builder.build());
 
         try {
             // Listen for changes in location as often as possible (throws java.lang.IllegalArgumentException)
@@ -156,6 +195,7 @@ public class RouteTracker {
         finally {
             // Release the wakelock
             wakeLock.release();
+            notificationManager.cancel(0);
 
             // Terminate collection of route information.  Note that this causes
             // calculations to occur in RouteCalculator class
