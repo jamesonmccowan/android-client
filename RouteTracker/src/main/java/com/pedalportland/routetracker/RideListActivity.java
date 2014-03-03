@@ -42,14 +42,14 @@ public class RideListActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 // position is like array index
                 // Start your Activity according to the item just clicked.
-                /*Intent i = new Intent(getApplicationContext(), details.class);
+                Intent i = new Intent(getApplicationContext(), Ride.class);
 
                 i.putExtra("date", "1/0" + position + "/2014");
                 i.putExtra("distance", "" + position + " miles");
                 i.putExtra("time", "0:0" + position + ":00");
                 i.putExtra("food", "" + position);
 
-                startActivity(i);*/
+                startActivity(i);
             }
         });
     }

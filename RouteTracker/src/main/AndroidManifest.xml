@@ -30,6 +30,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".RideListActivity"></activity>
+        <activity android:name=".Ride"></activity>
     </application>
 
 </manifest>
