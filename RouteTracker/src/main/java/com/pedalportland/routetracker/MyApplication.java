@@ -142,6 +142,9 @@ public class MyApplication extends Application {
         catch(DataLayerException ex) {
             setInitErrorMessage(getResources().getString(R.string.dl_error_directories));
         }
+        catch(RideInfoMgrException ex) {
+            setInitErrorMessage(getResources().getString(R.string.rim_error_directories));
+        }
 
         // Connect DataLayer and rideUploader service
         try {

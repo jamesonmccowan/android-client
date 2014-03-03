@@ -26,6 +26,7 @@ public class DataLayer {
     private String ridesDirName = null;
 
     private UploadService uploadService;
+    private RideInfoManager rideInfoManager = null;
 
     /**
      * Connection to the server
@@ -75,6 +76,8 @@ public class DataLayer {
         if (!rideFilesDir.exists())
             if (!rideFilesDir.mkdirs())
                 throw new DataLayerException();
+
+        rideInfoManager = new RideInfoManager(dataRootDir + RIDE_INFOS_DIR);
     }
 
     /**
@@ -120,6 +123,7 @@ public class DataLayer {
             if (null != (fw = new FileWriter(file))) {
                 fw.write(RouteCalculator.toJSON(ride.getRoute()));
                 fw.close();
+                rideInfoManager.addRideInfo(ride, rideId);
                 return true;
             }
         }
@@ -142,6 +146,14 @@ public class DataLayer {
 
     /**
      *
+     * @return
+     */
+    public List<RideInfo> getRideInfos() {
+        return rideInfoManager.getRideInfos();
+    }
+
+    /**
+     *
      * @param rideId
      * @return
      */
@@ -158,6 +170,7 @@ public class DataLayer {
     public void deleteRide(String name) {
 
         (new File(ridesDirName, name)).delete();
+        rideInfoManager.deleteRideInfo(name);
     }
 
     /**
