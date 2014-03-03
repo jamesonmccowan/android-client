@@ -1,10 +1,11 @@
 package com.pedalportland.routetracker;
 
+import android.app.*;
+import android.content.Context;
+import android.content.Intent;
 import com.pedalportland.routetracker.util.SystemUiHider;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -54,6 +55,12 @@ public class MainActivity extends Activity {
      */
     private SystemUiHider mSystemUiHider;
 
+    /**
+     *  Notification Icon Stuff
+     */
+    private String notificationService = Context.NOTIFICATION_SERVICE;
+    NotificationManager notificationManager;
+
     private static final String MODULE_TAG = "MainActivity";
 
     private MyApplication myApp = null;
@@ -102,6 +109,34 @@ public class MainActivity extends Activity {
 
         // register listener for trackingToggleButton
         trackingToggleButton.setOnCheckedChangeListener(trackingToggleButtonListener);
+
+        // Initialize notification / status bar
+//        notificationManager = (NotificationManager)getSystemService(notificationService);
+        Notification.Builder builder = new Notification.Builder(MainActivity.this);
+        builder.setSmallIcon(R.drawable.pedal_portland)
+                .setContentTitle("PedalPDX")
+                .setContentText("Application actively collecting location data")
+                .setWhen(System.currentTimeMillis());
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(MainActivity.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        builder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // mId allows you to update the notification later on.
+        mNotificationManager.notify(0, builder.build());
+
+
+
+
     }
 
     // listener for trackingToggleButton's events
