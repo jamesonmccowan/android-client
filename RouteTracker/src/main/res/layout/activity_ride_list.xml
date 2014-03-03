@@ -1,0 +1,38 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0099cc"
+    tools:context="com.pedalportland.routetracker.RideListActivity">
+
+    <!-- The primary full-screen view. This can be replaced with whatever view
+         is needed to present your content, e.g. VideoView, SurfaceView,
+         TextureView, etc. -->
+     <TextView android:id="@+id/logo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:keepScreenOn="true"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:gravity="center"
+        android:textColor="#33b5e5"
+        android:text="@string/dummy_content" />
+
+    <!-- List Divider -->
+    <View android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:background="?android:attr/listDivider" />
+
+    <!-- ListView (grid_items) -->
+    <LinearLayout android:id="@+id/layout"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="10dp">
+        <ListView android:id="@+id/listview"
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent"
+            android:background="#999999">
+        </ListView>
+    </LinearLayout>
+</LinearLayout>
