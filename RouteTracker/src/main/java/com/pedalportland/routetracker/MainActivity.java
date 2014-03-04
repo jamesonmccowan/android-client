@@ -1,10 +1,7 @@
 package com.pedalportland.routetracker;
 
 import android.app.*;
-import android.content.Context;
-import android.content.Intent;
 import com.pedalportland.routetracker.util.SystemUiHider;
-
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
@@ -71,7 +68,6 @@ public class MainActivity extends Activity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
@@ -109,7 +105,6 @@ public class MainActivity extends Activity {
 
         // register listener for trackingToggleButton
         trackingToggleButton.setOnCheckedChangeListener(trackingToggleButtonListener);
-
     }
 
     // listener for trackingToggleButton's events
