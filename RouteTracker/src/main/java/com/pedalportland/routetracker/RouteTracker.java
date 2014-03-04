@@ -132,10 +132,14 @@ public class RouteTracker {
             builder = new Notification.Builder(MyApplication.getInstance());
             builder.setSmallIcon(R.drawable.pedal_portland)
                     .setContentTitle("PedalPDX")
-                    .setContentText("Application actively collecting location data")
+                    .setContentText("Actively collecting location data")
                     .setWhen(System.currentTimeMillis());
 
-//            Intent resultIntent = new Intent(MyApplication.getInstance(), MainActivity.class);
+            Intent resultIntent = new Intent(MyApplication.getInstance(), MainActivity.class);
+            resultIntent.setAction("android.intent.action.MAIN");
+            PendingIntent resultPendingIntent = PendingIntent.getActivity(MyApplication.getInstance(), 0,
+                    resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
 //            TaskStackBuilder stackBuilder = TaskStackBuilder.create(MyApplication.getInstance());
 //            // Adds the back stack for the Intent (but not the Intent itself)
 //            stackBuilder.addParentStack(MainActivity.class);
@@ -143,8 +147,8 @@ public class RouteTracker {
 //            stackBuilder.addNextIntent(resultIntent);
 //            PendingIntent resultPendingIntent =
 //                    stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
-//            builder.setContentIntent(resultPendingIntent);
-//            builder.setOngoing(true);
+            builder.setContentIntent(resultPendingIntent);
+            builder.setOngoing(true);
 
         } catch (Exception ex) {
             ex.printStackTrace();
