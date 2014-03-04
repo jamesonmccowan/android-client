@@ -51,6 +51,11 @@ public class MainActivity extends Activity {
     private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
 
     /**
+     * Flag for identification of notification object
+     */
+    protected static final int NOTIFICATION_CODE = 1;
+
+    /**
      * The instance of the {@link SystemUiHider} for this activity.
      */
     private SystemUiHider mSystemUiHider;

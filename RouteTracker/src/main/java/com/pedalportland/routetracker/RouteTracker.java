@@ -41,7 +41,7 @@ public class RouteTracker {
      * @throws NullPointerException
      */
     public RouteTracker(LocationManager locationManager, PowerManager powerManager,
-                        NotificationManager notificationManager) {
+                        NotificationManager notificationManager, Notification.Builder builder) {
 
         if (null == locationManager) {
             throw new NullPointerException();
@@ -52,6 +52,10 @@ public class RouteTracker {
         }
 
         if (null == notificationManager){
+            throw new NullPointerException();
+        }
+
+        if (null == builder){
             throw new NullPointerException();
         }
 
@@ -127,32 +131,6 @@ public class RouteTracker {
         catch(Exception ex) {
             throw new RouteTrackerExceptionWakeLock(ex);
         }
-
-        try {
-            builder = new Notification.Builder(MyApplication.getInstance());
-            builder.setSmallIcon(R.drawable.pedal_portland)
-                    .setContentTitle("PedalPDX")
-                    .setContentText("Actively collecting location data")
-                    .setWhen(System.currentTimeMillis());
-
-            Intent resultIntent = new Intent(MyApplication.getInstance(), MainActivity.class);
-            resultIntent.setAction("android.intent.action.MAIN");
-            PendingIntent resultPendingIntent = PendingIntent.getActivity(MyApplication.getInstance(), 0,
-                    resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-//            TaskStackBuilder stackBuilder = TaskStackBuilder.create(MyApplication.getInstance());
-//            // Adds the back stack for the Intent (but not the Intent itself)
-//            stackBuilder.addParentStack(MainActivity.class);
-//            // Adds the Intent that starts the Activity to the top of the stack
-//            stackBuilder.addNextIntent(resultIntent);
-//            PendingIntent resultPendingIntent =
-//                    stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT);
-            builder.setContentIntent(resultPendingIntent);
-            builder.setOngoing(true);
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
     /**
@@ -166,7 +144,7 @@ public class RouteTracker {
 
         // Reset route information
         route.start();
-        notificationManager.notify(0, builder.build());
+        notificationManager.notify(MainActivity.NOTIFICATION_CODE, builder.build());
 
         try {
             // Listen for changes in location as often as possible (throws java.lang.IllegalArgumentException)
@@ -199,7 +177,7 @@ public class RouteTracker {
         finally {
             // Release the wakelock
             wakeLock.release();
-            notificationManager.cancel(0);
+            notificationManager.cancel(MainActivity.NOTIFICATION_CODE);
 
             // Terminate collection of route information.  Note that this causes
             // calculations to occur in RouteCalculator class
