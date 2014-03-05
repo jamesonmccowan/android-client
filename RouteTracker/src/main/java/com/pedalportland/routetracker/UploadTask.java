@@ -14,6 +14,10 @@ import java.net.URL;
 
 import android.util.Log;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 /**
  * A {@code UploadTask} is a concurrent unit of execution. It has its own call stack
  * for methods being invoked, their arguments and local variables. Each application
@@ -34,21 +38,23 @@ import android.util.Log;
 public class UploadTask extends Thread {
 
     private static final String MODULE_TAG = "UploadTask";
+    private static final String JSON_FIELD_RIDE_URL = "RideURL";
+    private static final int MAX_URL_RESPONSE_LENGTH = 1024;
+    private static final int MAX_ERROR_RESPONSE_LENGTH = 2048;
 
     private final String url;
     private final String responseDirName;
     private final String ridesDirName;
 
     /**
-     * Constructs a new UploadTask setting the specified pdx Observatory url and
-     * cache directory name.
-     * @param pdxObservatory
-     * @param ridesDirName
-     * @param responseDirName
+     * Constructs a new Upload Task
+     * @param url The URL to write the ride data to
+     * @param ridesDirName The directory that contains the ride files
+     * @param responseDirName The directory to write the response returned from the upload URL
      */
-    public UploadTask(String pdxObservatory, String ridesDirName, String responseDirName) {
+    public UploadTask(String url, String ridesDirName, String responseDirName) {
         super();
-        this.url = pdxObservatory;
+        this.url = url;
         this.ridesDirName = ridesDirName;
         this.responseDirName = responseDirName;
     }
@@ -76,7 +82,7 @@ public class UploadTask extends Thread {
                 else if (!rideFile.exists()) {
                     uploadFlag.delete();
                 }
-                else if (null == (json = loadJSON(rideFile))) {
+                else if (null == (json = loadFile(rideFile))) {
                     uploadFlag.delete();
                 }
                 else if (writeUrl(json, rideId)) {
@@ -84,113 +90,211 @@ public class UploadTask extends Thread {
                 }
             }
             catch(Exception ex) {
-                // Do nothing
+                Log.d(MODULE_TAG, ex.getMessage());
             }
         }
     }
 
     /**
-     *
-     * @param file
-     * @return
+     * Loads a file into a string
+     * @param file the file to bring into memory
+     * @return the file's data
      */
-    private String loadJSON(File file) {
+    private String loadFile(File file) {
 
         FileReader fr;
         char buff[] = new char[512];
         StringBuilder sb = new StringBuilder();
+        String response = null;
 
         // Find the file
         try {
             fr = new FileReader(file);
-        }
-        catch (FileNotFoundException ex) {
-            return null;
-        }
 
-        // Read all of the data
-        try {
-            while(-1 != fr.read(buff, 0, 512)) {
-                sb.append(buff);
-            }
-            return sb.toString();
-        }
-        catch(IOException ex) {
-            return null;
-        }
-        finally {
-            // close the reader
+            // Read all of the data
             try {
-                fr.close();
+                int numBytes;
+
+                while(-1 != (numBytes = fr.read(buff, 0, 512))) {
+                    sb.append(buff, 0, numBytes);
+                }
+                response = sb.toString();
             }
             catch(IOException ex) {
-                // ignore it, we already got the data.
+                Log.d(MODULE_TAG, ex.getMessage());
+            }
+            finally { // close the reader
+                try {
+                    fr.close();
+                }
+                catch(IOException ex) {
+                    Log.d(MODULE_TAG, ex.getMessage());
+                }
             }
         }
+        catch (FileNotFoundException ex) {
+            Log.d(MODULE_TAG, ex.getMessage());
+        }
+        return response;
     }
 
     /**
-     *
-     * @param json
-     * @return
+     * Posts the JSON formatted data to the URL
+     * @param json The data to post
+     * @return true if data was posted successfully, false otherwise
      */
     private boolean writeUrl(String json, String fileName) {
 
         boolean uploaded = false;
-        HttpURLConnection connection;
+        HttpURLConnection connection = null;
         OutputStreamWriter request;
+        InputStream inputStream = null;
+        InputStream errorStream = null;
 
         URL url;
-        String response;
 
         try {
             url = new URL(this.url);
             connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setRequestMethod("POST");
 
+            // Send the request
             request = new OutputStreamWriter(connection.getOutputStream());
             request.write(json);
             request.flush();
-            request.close();
 
-            // Note: we say we are successful at this point (eventhough we have
-            // not retrieved the response from the web site so we don't continue
-            // to upload the same data
+            // Note: at this point, we say we are successful even though we have
+            // not retrieved the response from the web site. If the data we sent
+            // was bad, there is nothing we can do to fix it, so we need to not
+            // upload the file any more
 
             uploaded = true;
 
-            // Retrieve the response from the web site
-            String line;
+            // Get the resulting response
+            if (HttpURLConnection.HTTP_CREATED == connection.getResponseCode()) {
 
-            InputStream in = connection.getInputStream();
-            InputStreamReader isr = new InputStreamReader(in);
-            BufferedReader reader = new BufferedReader(isr);
-            StringBuilder sb = new StringBuilder();
-            sb.append(this.url).append("\n");
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append("\n");
+                try {
+                    // Retrieve the response from the web site
+                    String response;
+                    String rideURL;
+
+                    inputStream = connection.getInputStream();
+                    if (null != (response = getResponse(inputStream, MAX_URL_RESPONSE_LENGTH)))
+                        if (null != (rideURL = getRideURL(response)))
+                            saveRideURL(rideURL, fileName);
+                }
+                catch(IOException ex) {
+                    Log.d(MODULE_TAG, ex.getMessage());
+                }
             }
-            // Response from server after login process will be stored in response file.
-            response = sb.toString();
-            writeResult(response, fileName);
-
-            isr.close();
-            reader.close();
+            else {
+                try {
+                    errorStream = connection.getInputStream();
+                    Log.d(MODULE_TAG, getResponse(errorStream, MAX_ERROR_RESPONSE_LENGTH));
+                }
+                catch(IOException ex) {
+                    Log.d(MODULE_TAG, ex.getMessage());
+                }
+            }
         }
         catch(Exception ex) {
-            Log.e("UploadTask", ex.getMessage());
+            Log.d(MODULE_TAG, ex.getMessage());
+        }
+        finally {
+            closeStream(inputStream);
+            closeStream(errorStream);
+            if (null != connection)
+                connection.disconnect();
         }
         return uploaded;
     }
 
     /**
-     *
-     * @param result
-     * @param fileName
+     * Reads the data in an input stream up to max bytes.  If more than
+     * maxBytes are read, the input is nullified
+     * @param inputStream stream to read from
+     * @param maxBytes maximum number of bytes to read
+     * @return contents of inputStream
      */
-    private void writeResult(String result, String fileName) {
+    private String getResponse(InputStream inputStream, int maxBytes) {
+
+        InputStreamReader isr = null;
+        BufferedReader reader;
+        String response = null;
+        StringBuilder sb = new StringBuilder();
+        char buff[] = new char[512];
+        int numBytes;
+        int totalBytes = 0;
+
+        try {
+            // Obtain stream
+            if (null != inputStream) {
+                if (null != (isr = new InputStreamReader(inputStream))) {
+                    if (null != (reader = new BufferedReader(isr))) {
+                        // Read and append data to buffer until EOF
+                        while(-1 != (numBytes = reader.read(buff, 0, 512))) {
+                            sb.append(buff, 0, numBytes);
+                            totalBytes += numBytes;
+                            if (totalBytes > maxBytes) {
+                                return null;
+                            }
+                        }
+                        response = sb.toString();
+                    }
+                }
+            }
+        }
+        catch(Exception ex) {
+            Log.d(MODULE_TAG, ex.getMessage());
+        }
+        finally {
+            if (null != isr) {
+                try {
+                    isr.close();
+                }
+                catch(IOException ex) {
+                    Log.d(MODULE_TAG, ex.getMessage());
+                }
+            }
+        }
+        return response;
+    }
+
+    /**
+     * Parses JSON data to extract ride URL
+     * @param apiResponse the response returned by the PedalPDX API
+     * @return the ride URL
+     */
+    private String getRideURL(String apiResponse) {
+
+        String rideURL = null;
+
+        try {
+            // Parse JSON data
+            JSONObject jsonObject;
+            JSONParser parser = new JSONParser();
+            jsonObject = (JSONObject) parser.parse(apiResponse);
+
+            // Validate presence of JSON fields
+            if (jsonObject.containsKey(JSON_FIELD_RIDE_URL)) {
+                rideURL = (String) jsonObject.get(JSON_FIELD_RIDE_URL);
+            }
+        }
+        catch(ParseException ex) {
+            Log.d(MODULE_TAG, ex.getMessage());
+        }
+        return rideURL;
+    }
+
+    /**
+     * Writes 'result' to the file specified by fileName
+     * @param rideURL Write the result returned from the URL to a file on disk
+     * @param fileName File to write the response to
+     */
+    private void saveRideURL(String rideURL, String fileName) {
 
         File file;
         FileWriter fw = null;
@@ -199,12 +303,12 @@ public class UploadTask extends Thread {
         try {
             if (null != (file = new File(responseDirName, fileName))) {
                 if (null != (fw = new FileWriter(file))) {
-                    fw.write(result);
+                    fw.write(rideURL);
                 }
             }
         }
         catch (java.io.IOException ex) {
-            Log.e(MODULE_TAG, ex.getMessage());
+            Log.d(MODULE_TAG, ex.getMessage());
         }
         finally {
             // close the reader
@@ -213,9 +317,24 @@ public class UploadTask extends Thread {
                     fw.close();
             }
             catch(IOException ex) {
-                // ignore it, we already got the data.
+                Log.d(MODULE_TAG, ex.getMessage());
             }
         }
 
+    }
+
+    /**
+     * Closes an InputStream
+     * @param inputStream the stream to close
+     */
+    private void closeStream(InputStream inputStream){
+        try {
+            if (null != inputStream) {
+                inputStream.close();
+            }
+        }
+            catch(IOException ex) {
+                Log.d(MODULE_TAG, ex.getMessage());
+        }
     }
 }
