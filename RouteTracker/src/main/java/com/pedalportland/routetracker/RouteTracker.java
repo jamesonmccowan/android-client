@@ -37,8 +37,12 @@ public class RouteTracker {
      * by the main application.
      * @throws NullPointerException
      */
-    public RouteTracker(LocationManager locationManager, PowerManager powerManager,
-                        NotificationManager notificationManager, Notification.Builder builder) {
+    public RouteTracker(
+            LocationManager locationManager,
+            PowerManager powerManager,
+            NotificationManager notificationManager,
+            Notification.Builder builder
+    ) {
 
         if (null == locationManager) {
             throw new NullPointerException();

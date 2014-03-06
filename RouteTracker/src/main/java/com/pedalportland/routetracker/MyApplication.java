@@ -88,10 +88,12 @@ public class MyApplication extends Application {
 
             Intent resultIntent = new Intent(MyApplication.getInstance(), MainActivity.class);
             resultIntent.setAction("android.intent.action.MAIN");
-            PendingIntent resultPendingIntent = PendingIntent.getActivity(MyApplication.getInstance(),
+            PendingIntent resultPendingIntent = PendingIntent.getActivity(
+                    MyApplication.getInstance(),
                     MainActivity.NOTIFICATION_CODE,
                     resultIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            );
 
             builder.setContentIntent(resultPendingIntent);
             builder.setOngoing(true);
