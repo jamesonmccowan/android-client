@@ -1,7 +1,8 @@
 package com.pedalportland.routetracker;
 
-import android.app.Application;
+import android.app.*;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.location.LocationManager;
 import android.os.PowerManager;
@@ -9,7 +10,7 @@ import android.os.PowerManager;
 /**
  * This class extends the <code>Application<code/> class, and implements it as a singleton.
  * This class is used to maintain global application state.
- * @author robin5 (Robin Murray)
+ * @author robin5 (Robin Murray) and Dan Catalano
  * @version 1.0
  * @see <code>Application<code/> class.
  * created 2/2/14
@@ -45,6 +46,8 @@ public class MyApplication extends Application {
 
         LocationManager locationManager = null;
         PowerManager powerManager = null;
+        NotificationManager notificationManager = null;
+        Notification.Builder builder = null;
 
         myApp = this;
 
@@ -74,9 +77,35 @@ public class MyApplication extends Application {
             return;
         }
 
+        // Create a NotificationManager & a builder object then build the builder
+        try {
+            notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            builder = new Notification.Builder(MyApplication.getInstance());
+            builder.setSmallIcon(R.drawable.pedal_portland)
+                    .setContentTitle("PedalPDX")
+                    .setContentText("Actively collecting location data")
+                    .setWhen(System.currentTimeMillis());
+
+            Intent resultIntent = new Intent(MyApplication.getInstance(), MainActivity.class);
+            resultIntent.setAction("android.intent.action.MAIN");
+            PendingIntent resultPendingIntent = PendingIntent.getActivity(
+                    MyApplication.getInstance(),
+                    MainActivity.NOTIFICATION_CODE,
+                    resultIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            );
+
+            builder.setContentIntent(resultPendingIntent);
+            builder.setOngoing(true);
+
+        } catch (Exception ex) {
+            setInitErrorMessage(ex.getMessage());
+            return;
+        }
+
         // Create a RouteTracker object and maintain a reference to it
         try {
-            routeTracker = new RouteTracker(locationManager, powerManager);
+            routeTracker = new RouteTracker(locationManager, powerManager, notificationManager, builder);
             if (null == routeTracker) {
                 setInitErrorMessage(getResources().getString(R.string.ex_error_out_of_memory));
                 return;
@@ -188,4 +217,5 @@ public class MyApplication extends Application {
     public DataUploader getDataUploader() {
         return dataUploader;
     }
+
 }

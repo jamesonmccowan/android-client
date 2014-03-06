@@ -1,10 +1,8 @@
 package com.pedalportland.routetracker;
 
+import android.app.*;
 import com.pedalportland.routetracker.util.SystemUiHider;
-
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -50,6 +48,11 @@ public class MainActivity extends Activity {
      * The flags to pass to {@link SystemUiHider#getInstance}.
      */
     private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
+
+    /**
+     * Flag for identification of notification object
+     */
+    protected static final int NOTIFICATION_CODE = 1;
 
     /**
      * The instance of the {@link SystemUiHider} for this activity.
