@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.pedalportland.routetracker"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0"
+     >
 
     <uses-sdk
         android:minSdkVersion="16"
@@ -14,10 +15,12 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/pedal_portland"
+        android:icon="@drawable/bike"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        android:name="com.pedalportland.routetracker.MyApplication" >
+        android:name="com.pedalportland.routetracker.MyApplication"
+        android:debuggable="false"
+        >
         <activity
             android:name="com.pedalportland.routetracker.MainActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
