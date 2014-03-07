@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:stretchColumns="1">
+    <TableRow>
+        <TextView
+            android:id="@+id/date"
+            android:layout_span="4"
+            android:gravity="center"
+            android:text=""
+            android:textSize="24sp"
+            android:textAlignment="center"
+            android:background="#ccddff"
+            android:layout_marginLeft="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginBottom="0dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp" />
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:id="@+id/distance"
+            android:layout_span="1"
+            android:text=""
+            android:textSize="24sp"
+            android:gravity="center"
+            android:background="#ccddff"
+            android:layout_marginLeft="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_marginBottom="4dp"
+            android:layout_weight="2"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_span="1"
+            android:text=""
+            android:textSize="24sp"
+            android:gravity="center"
+            android:background="#ccddff"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginBottom="4dp"
+            android:layout_weight="1"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp" />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_weight="1"
+            android:background="#ccddff"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_column="3"
+            android:layout_marginLeft="1dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="4dp">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="36dp"
+                android:id="@+id/imageView"
+                android:src="@drawable/doughnut"
+                android:paddingLeft="8dp"
+                android:paddingTop="4dp"
+                android:contentDescription="Donut" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/food"
+                android:textSize="24sp"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:paddingRight="8dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp" />
+        </LinearLayout>
+    </TableRow>
+</TableLayout>

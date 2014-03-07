@@ -3,10 +3,14 @@ package com.pedalportland.routetracker;
 import android.app.*;
 import com.pedalportland.routetracker.util.SystemUiHider;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -457,5 +461,22 @@ public class MainActivity extends Activity {
         public void run() {
             mSystemUiHider.hide();
         }
+    }
+
+    /* Creates the menu items */
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 0, 0, "List of Rides");
+        return true;
+    }
+
+    /* Handles item selections */
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case 0:
+                Intent i = new Intent(getApplicationContext(), RideListActivity.class);
+                startActivity(i);
+                return true;
+        }
+        return false;
     }
 }
