@@ -1,4 +1,4 @@
-package com.pedalportland.routetracker;
+package edu.pdx.cs.pedal.routetracker;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -53,7 +53,7 @@ public class Maps extends Activity {
 
         map.addMarker(new MarkerOptions().position(PORTLANDSQ).title("PioneerSQ")
                 .snippet("Heart of portland").icon(BitmapDescriptorFactory
-                        .fromResource(R.drawable.pedal_portland)));
+                        .fromResource(R.drawable.pedalpdx)));
 
         map.addPolyline(new PolylineOptions().addAll(Arrays.asList(trip)).width(6).
                 color(Color.BLUE).geodesic(true));

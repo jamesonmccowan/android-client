@@ -1,7 +1,7 @@
-package com.pedalportland.routetracker;
+package edu.pdx.cs.pedal.routetracker;
 
 import android.app.*;
-import com.pedalportland.routetracker.util.SystemUiHider;
+import edu.pdx.cs.pedal.routetracker.util.SystemUiHider;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;

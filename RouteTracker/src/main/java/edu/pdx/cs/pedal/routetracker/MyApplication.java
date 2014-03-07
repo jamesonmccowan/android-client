@@ -1,4 +1,4 @@
-package com.pedalportland.routetracker;
+package edu.pdx.cs.pedal.routetracker;
 
 import android.app.*;
 import android.content.Context;
@@ -81,7 +81,7 @@ public class MyApplication extends Application {
         try {
             notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             builder = new Notification.Builder(MyApplication.getInstance());
-            builder.setSmallIcon(R.drawable.pedal_portland)
+            builder.setSmallIcon(R.drawable.pedalpdx)
                     .setContentTitle("PedalPDX")
                     .setContentText("Actively collecting location data")
                     .setWhen(System.currentTimeMillis());
@@ -154,7 +154,7 @@ public class MyApplication extends Application {
         // create a DataUploader object and maintain a reference to it
         try {
             dataUploader = new DataUploader(
-                getResources().getString(R.string.default_pedal_portland_url));
+                getResources().getString(R.string.pedalpdx_url));
         }
         catch(NullPointerException ex) {
             setInitErrorMessage(getResources().getString(R.string.du_null_pointer));
