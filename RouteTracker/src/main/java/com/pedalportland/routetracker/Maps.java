@@ -44,7 +44,7 @@ public class Maps extends Activity {
         map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
                 .getMap();
 
-        if (getTrip().size == 0)
+        if (getTrip().size() == 0)
         {
             map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
                     .getMap();
