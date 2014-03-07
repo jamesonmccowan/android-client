@@ -40,19 +40,15 @@ public class Maps extends Activity {
         setContentView(R.layout.activity_maps);
 
         setTrip(RouteCalculator.gettrip());
-
         map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
                 .getMap();
 
         if (getTrip().size() == 0)
         {
-            map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
-                    .getMap();
+            return;
         }
 
         else{
-            map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
-                    .getMap();
             map.addMarker(new MarkerOptions().position(getTrip().get(0))
                     .title("This is the start point"));
 
