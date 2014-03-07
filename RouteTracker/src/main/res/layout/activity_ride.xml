@@ -6,80 +6,87 @@
     android:background="#0099cc"
     tools:context="com.pedalportland.routetracker.Ride">
 
-    <TextView android:id="@+id/logo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:keepScreenOn="true"
-        android:textColor="#33b5e5"
-        android:textStyle="bold"
-        android:textSize="24sp"
-        android:gravity="center"
-        android:text="@string/dummy_content" />
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+            <TextView android:id="@+id/logo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:keepScreenOn="true"
+                android:textColor="#33b5e5"
+                android:textStyle="bold"
+                android:textSize="24sp"
+                android:gravity="center"
+                android:text="@string/dummy_content" />
 
-    <TextView android:id="@+id/date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:keepScreenOn="true"
-        android:textSize="24sp"
-        android:gravity="center"
-        android:text="1/25/2014 at 4:30pm"
-        android:layout_marginTop="70dp"
-        android:textColor="#ffffff" />
+            <TextView android:id="@+id/date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:keepScreenOn="true"
+                android:textSize="24sp"
+                android:gravity="center"
+                android:text="1/25/2014 at 4:30pm"
+                android:layout_marginTop="70dp"
+                android:textColor="#ffffff" />
 
-    <TextView android:id="@+id/distance"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:keepScreenOn="true"
-        android:textSize="24sp"
-        android:gravity="center"
-        android:text="Distance: 0.8 miles"
-        android:layout_marginTop="120dp"
-        android:textColor="#ffffff" />
+            <TextView android:id="@+id/distance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:keepScreenOn="true"
+                android:textSize="24sp"
+                android:gravity="center"
+                android:text="Distance: 0.8 miles"
+                android:layout_marginTop="120dp"
+                android:textColor="#ffffff" />
 
-    <TextView android:id="@+id/time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:keepScreenOn="true"
-        android:textSize="24sp"
-        android:gravity="center"
-        android:text="Time: 10 minutes"
-        android:layout_gravity="right|top"
-        android:layout_marginTop="170dp"
-        android:textColor="#ffffff" />
+            <TextView android:id="@+id/time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:keepScreenOn="true"
+                android:textSize="24sp"
+                android:gravity="center"
+                android:text="Time: 10 minutes"
+                android:layout_gravity="right|top"
+                android:layout_marginTop="170dp"
+                android:textColor="#ffffff" />
 
-    <TextView android:id="@+id/avSpeed"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:keepScreenOn="true"
-        android:textSize="24sp"
-        android:gravity="center"
-        android:text="Average Speed: 5 mph"
-        android:layout_gravity="right|top"
-        android:layout_marginTop="220dp"
-        android:textColor="#ffffff" />
+            <TextView android:id="@+id/avSpeed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:keepScreenOn="true"
+                android:textSize="24sp"
+                android:gravity="center"
+                android:text="Average Speed: 5 mph"
+                android:layout_gravity="right|top"
+                android:layout_marginTop="220dp"
+                android:textColor="#ffffff" />
 
-    <TextView android:id="@+id/mxSpeed"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:keepScreenOn="true"
-        android:textSize="24sp"
-        android:gravity="center"
-        android:text="Max Speed: 8mph"
-        android:layout_gravity="right|top"
-        android:layout_marginTop="270dp"
-        android:textColor="#ffffff" />
+            <TextView android:id="@+id/mxSpeed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:keepScreenOn="true"
+                android:textSize="24sp"
+                android:gravity="center"
+                android:text="Max Speed: 8mph"
+                android:layout_gravity="right|top"
+                android:layout_marginTop="270dp"
+                android:textColor="#ffffff" />
 
-    <TextView android:id="@+id/food"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:keepScreenOn="true"
-        android:textSize="24sp"
-        android:gravity="center"
-        android:text="Burritos burned off: 0.4"
-        android:layout_gravity="right|top"
-        android:layout_marginTop="320dp"
-        android:textColor="#ffffff" />
-
+            <TextView android:id="@+id/food"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:keepScreenOn="true"
+                android:textSize="24sp"
+                android:gravity="center"
+                android:text="Burritos burned off: 0.4"
+                android:layout_gravity="right|top"
+                android:layout_marginTop="320dp"
+                android:textColor="#ffffff" />
+        </FrameLayout>
+    </ScrollView>
 
     <LinearLayout android:id="@+id/fullscreen_content_controls"
         style="?metaButtonBarStyle"
@@ -98,5 +105,4 @@
             android:layout_gravity="bottom|right"
             android:layout_weight="1"/>
     </LinearLayout>
-
 </FrameLayout>
