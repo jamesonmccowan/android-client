@@ -5,11 +5,15 @@ import com.pedalportland.routetracker.util.SystemUiHider;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 import android.util.Log;
@@ -76,6 +80,7 @@ public class MainActivity extends Activity {
         mSystemUiHider = SystemUiHider.getInstance(this, contentView, HIDER_FLAGS);
         mSystemUiHider.setup();
         mSystemUiHider.setOnVisibilityChangeListener(new View_OnVisibilityChangeListener(controlsView));
+        Button maps = (Button) findViewById(R.id.maps);
 
         // Set up the user interaction to manually show or hide the system UI.
         contentView.setOnClickListener(new ContentView_ViewOnClickListener());
@@ -102,6 +107,14 @@ public class MainActivity extends Activity {
 
         // register listener for trackingToggleButton
         trackingToggleButton.setOnCheckedChangeListener(trackingToggleButtonListener);
+        maps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), Maps.class);
+                startActivityForResult(intent, 0);
+            }
+        });
+
     }
 
     // listener for trackingToggleButton's events
