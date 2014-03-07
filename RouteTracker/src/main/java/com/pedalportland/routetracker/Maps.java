@@ -44,33 +44,43 @@ public class Maps extends Activity {
         map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
                 .getMap();
 
-        map.addMarker(new MarkerOptions().position(getTrip().get(0))
-                .title("This is the start point"));
-
-        map.addMarker(new MarkerOptions().position(getTrip().get(getTrip().size() - 1))
-                .title("This is the end point"));
-
-
-        map.addPolyline(new PolylineOptions().addAll(getTrip()).width(6).
-                color(Color.BLUE).geodesic(true));
-
-        for (int i = 0; i <=getTrip().size() -1; i++)
+        if (getTrip().size == 0)
         {
-            builder.include(getTrip().get(i));
-
+            map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
+                    .getMap();
         }
 
-        trip.clear();
+        else{
+            map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
+                    .getMap();
+            map.addMarker(new MarkerOptions().position(getTrip().get(0))
+                    .title("This is the start point"));
 
-        map.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-            @Override
-            public void onCameraChange(CameraPosition arg0) {
-                // Move camera.
-                map.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 10));
-                // Remove listener to prevent position reset on camera move.
-                map.setOnCameraChangeListener(null);
+            map.addMarker(new MarkerOptions().position(getTrip().get(getTrip().size() - 1))
+                    .title("This is the end point"));
+
+
+            map.addPolyline(new PolylineOptions().addAll(getTrip()).width(6).
+                    color(Color.BLUE).geodesic(true));
+
+            for (int i = 0; i <=getTrip().size() -1; i++)
+            {
+                builder.include(getTrip().get(i));
+
             }
-        });
+
+            trip.clear();
+
+            map.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+                @Override
+                public void onCameraChange(CameraPosition arg0) {
+                    // Move camera.
+                    map.moveCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 10));
+                    // Remove listener to prevent position reset on camera move.
+                    map.setOnCameraChangeListener(null);
+                }
+            });
+        }
     }
 
     public ArrayList<LatLng> getTrip() {return this.trip;}
