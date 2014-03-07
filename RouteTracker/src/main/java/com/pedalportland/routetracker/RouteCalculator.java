@@ -1,6 +1,9 @@
 package com.pedalportland.routetracker;
 
 import android.location.Location;
+
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.List;
 import java.util.ArrayList;
 import org.joda.time.DateTime;
@@ -31,6 +34,7 @@ public class RouteCalculator {
     private double speedKM;     // Average speed in kilometers/Hour
     private double distanceMI;  // Total distance in miles
     private double speedMI;     // Average speed in miles/Hour
+    private static ArrayList<LatLng> trip = new ArrayList<LatLng>();
 
     /**
      * Instantiates an instance of a <code>RouteCalculator</code>
@@ -172,6 +176,7 @@ public class RouteCalculator {
         JSONArray points = new JSONArray();
 
         for(Location point : locations) {
+            trip.add(new LatLng(point.getLatitude(),point.getLongitude()));
             JSONObject obj = new JSONObject();
             obj.put("time", (new DateTime(point.getTime())).toString()); // convert from UTC time, in milliseconds since January 1, 1970 to ISO 8601
             obj.put("latitude", point.getLatitude());
@@ -185,5 +190,10 @@ public class RouteCalculator {
         route.put("hash", locations.hashCode());
 
         return route.toString();
+    }
+
+    public static ArrayList<LatLng> gettrip()
+    {
+        return trip;
     }
 }
