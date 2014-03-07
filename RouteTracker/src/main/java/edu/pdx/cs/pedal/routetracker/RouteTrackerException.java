@@ -1,4 +1,4 @@
-package com.pedalportland.routetracker;
+package edu.pdx.cs.pedal.routetracker;
 
 /**
  * This class extends the <code>RuntimeException<code/> class, and implements

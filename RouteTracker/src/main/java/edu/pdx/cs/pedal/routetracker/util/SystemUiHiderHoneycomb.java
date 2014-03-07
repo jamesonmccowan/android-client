@@ -1,4 +1,4 @@
-package com.pedalportland.routetracker.util;
+package edu.pdx.cs.pedal.routetracker.util;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
