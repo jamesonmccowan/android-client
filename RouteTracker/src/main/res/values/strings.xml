@@ -29,5 +29,9 @@
     <string name="rt_error_start">Not able to start tracking</string>
     <string name="rt_error_stop">Error(s) encountered while stopping tracking</string>
     <string name="du_null_pointer">DataUploader detected null parameters</string>
+    <string name="dl_null_pointer">DataLayer detected null parameters</string>
+    <string name="dl_error_directories">DataLayer cannot create directories</string>
+    <string name="dl_security_exception">DataLayer does not have permission to access UploadService</string>
+    <string name="rim_error_directories">RideInfoManager cannot create directories</string>
 
 </resources>

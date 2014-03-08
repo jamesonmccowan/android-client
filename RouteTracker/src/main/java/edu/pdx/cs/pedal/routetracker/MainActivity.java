@@ -63,7 +63,7 @@ public class MainActivity extends Activity {
 
     private MyApplication myApp = null;
     private RouteTracker routeTracker = null;
-    private DataUploader dataUploader = null;
+    private DataLayer dataLayer = null;
 
     /**
      * Called when the activity is first created.
@@ -102,8 +102,8 @@ public class MainActivity extends Activity {
                 trackingToggleButton.setChecked(routeTracker.isTracking());
             }
 
-            // Initialize reference to DataUploader
-            dataUploader = myApp.getDataUploader();
+            // Initialize reference to DataLayer
+            dataLayer = myApp.getDataLayer();
         }
 
         // register listener for trackingToggleButton
@@ -162,6 +162,9 @@ public class MainActivity extends Activity {
     public void onStart() {
         try {
             super.onStart(); // call super's onStart method
+
+            if (null != dataLayer)
+                dataLayer.startRideUpload();
         }
         catch (Exception ex){
             Log.e(MODULE_TAG, ex.getMessage());
@@ -377,8 +380,8 @@ public class MainActivity extends Activity {
                                 showResult(route);
 
                                 // Upload the route data
-                                if (null != dataUploader) {
-                                    dataUploader.UploadData(route.getRoute());
+                                if (null != dataLayer) {
+                                    dataLayer.putRide(route);
                                 }
                             }
                         }
