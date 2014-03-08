@@ -8,7 +8,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class Ride extends Activity {
+public class RideActivity extends Activity {
     /**
      * Called when the activity is first created.
      */
@@ -32,7 +32,7 @@ public class Ride extends Activity {
 
     /* Creates the menu items */
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 0, 0, "Ride Tracker");
+        menu.add(0, 0, 0, "RideActivity Tracker");
         menu.add(0, 1, 0, "List of Rides");
         return true;
     }
