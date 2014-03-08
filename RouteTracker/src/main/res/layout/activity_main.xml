@@ -5,7 +5,6 @@
     android:background="#0099cc"
     tools:context="edu.pdx.cs.pedal.routetracker.MainActivity">
 
-
     <!-- The primary full-screen view. This can be replaced with whatever view
          is needed to present your content, e.g. VideoView, SurfaceView,
          TextureView, etc. -->
@@ -19,13 +18,11 @@
         android:gravity="center"
         android:text="@string/dummy_content" />
 
-
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
     <FrameLayout android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
-
 
         <LinearLayout android:id="@+id/fullscreen_content_controls"
             style="?metaButtonBarStyle"
@@ -36,7 +33,6 @@
             android:orientation="horizontal"
             tools:ignore="UselessParent">
 
-
             <ToggleButton android:id="@+id/trackingToggleButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -44,10 +40,7 @@
                 android:textOff="@string/button_start_tracking"
                 android:layout_gravity="bottom|right"
                 android:layout_weight="1"/>
-
-
         </LinearLayout>
-
 
         <Button
             style="?android:attr/buttonStyleSmall"
@@ -57,7 +50,6 @@
             android:id="@+id/maps"
             android:layout_gravity="right|top" />
     </FrameLayout>
-
 
 </FrameLayout>
 
