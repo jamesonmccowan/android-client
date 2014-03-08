@@ -3,6 +3,8 @@ package com.pedalportland.routetracker;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -52,5 +54,22 @@ public class RideListActivity extends Activity {
                 startActivity(i);
             }
         });
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 0, 0, "Ride Tracker");
+        return true;
+    }
+
+    /* Handles item selections */
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent i;
+        switch (item.getItemId()) {
+            case 0:
+                i = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(i);
+                return true;
+        }
+        return false;
     }
 }

@@ -32,7 +32,7 @@ public class RideActivity extends Activity {
 
     /* Creates the menu items */
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 0, 0, "RideActivity Tracker");
+        menu.add(0, 0, 0, "Ride Tracker");
         menu.add(0, 1, 0, "List of Rides");
         return true;
     }
