@@ -1,10 +1,8 @@
-package com.pedalportland.routetracker;
+package edu.pdx.cs.pedal.routetracker;
 
-import com.pedalportland.routetracker.util.SystemUiHider;
-
+import android.app.*;
+import edu.pdx.cs.pedal.routetracker.util.SystemUiHider;
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -54,6 +52,11 @@ public class MainActivity extends Activity {
     private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
 
     /**
+     * Flag for identification of notification object
+     */
+    protected static final int NOTIFICATION_CODE = 1;
+
+    /**
      * The instance of the {@link SystemUiHider} for this activity.
      */
     private SystemUiHider mSystemUiHider;
@@ -75,6 +78,7 @@ public class MainActivity extends Activity {
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.fullscreen_content);
+        Button maps = (Button) findViewById(R.id.maps);
 
         // Set up an instance of SystemUiHider to control the system UI for this activity
         mSystemUiHider = SystemUiHider.getInstance(this, contentView, HIDER_FLAGS);
@@ -107,6 +111,7 @@ public class MainActivity extends Activity {
 
         // register listener for trackingToggleButton
         trackingToggleButton.setOnCheckedChangeListener(trackingToggleButtonListener);
+
         maps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,7 +119,6 @@ public class MainActivity extends Activity {
                 startActivityForResult(intent, 0);
             }
         });
-
     }
 
     // listener for trackingToggleButton's events
@@ -173,7 +177,7 @@ public class MainActivity extends Activity {
     /**
      * Called when the <code>activity<code/> will start interacting with the user. At this point
      * the <code>activity<code/> is at the top of the <code>activity<code/> stack, with user
-     * input going to it.  Always followed by <code>onPause()<code/>.
+     * input going to it. Always followed by <code>onPause()<code/>.
      * @see <code>onPause<code/> class.
      */
     @Override
@@ -207,7 +211,7 @@ public class MainActivity extends Activity {
      * Called when the <code>activity<code/> is no longer visible to the user, because another
      * <code>activity<code/> has been resumed and is covering this one. This may happen either
      * because a new <code>activity<code/> is being started, an existing one is being brought
-     * in front of this one, or this one is being destroyed.  Followed by either
+     * in front of this one, or this one is being destroyed. Followed by either
      * <code>onRestart<code/> if this <code>activity<code/> is coming back to interact with
      * the user, or <code>onDestroy<code/> if this <code>activity<code/> is going away.
      * @see <code>onRestart<code/> class.
@@ -253,7 +257,7 @@ public class MainActivity extends Activity {
     /**
      * Inner Class: ContentView_ViewOnClickListener
      *
-     * Description:  Class used to toggle display of UI elements in view
+     * Description: Class used to toggle display of UI elements in view
      */
     private class ContentView_ViewOnClickListener implements View.OnClickListener {
         @Override
@@ -270,7 +274,7 @@ public class MainActivity extends Activity {
     /**
      * Inner Class: View_OnVisibilityChangeListener
      *
-     * Description:  Class handles OnVisibilityChangeListener events for View
+     * Description: Class handles OnVisibilityChangeListener events for View
      */
     private class View_OnVisibilityChangeListener
             implements SystemUiHider.OnVisibilityChangeListener {
@@ -315,7 +319,7 @@ public class MainActivity extends Activity {
     /**
      * Inner Class: View_OnVisibilityChangeListener
      *
-     * Description:  Class handles OnTouchListener events for View
+     * Description: Class handles OnTouchListener events for View
      */
     private class View_OnTouchListener
             implements View.OnTouchListener {
@@ -331,7 +335,7 @@ public class MainActivity extends Activity {
     /**
      * Inner Class: CompoundButton_MyOnCheckedChangeListener
      *
-     * Description:  Class handles OnCheckedChangeListener events for CompoundButton
+     * Description: Class handles OnCheckedChangeListener events for CompoundButton
      */
     private class CompoundButton_MyOnCheckedChangeListener
             implements CompoundButton.OnCheckedChangeListener {
@@ -354,8 +358,8 @@ public class MainActivity extends Activity {
                 else {
                     if (isChecked) {
                         try {
-                        // Start the route tracking
-                        routeTracker.startTracking();
+                            // Start the route tracking
+                            routeTracker.startTracking();
                         }
                         catch(RouteTrackerException ex) {
                             ErrorDialog(R.string.rt_error_start);
@@ -400,18 +404,18 @@ public class MainActivity extends Activity {
          */
         private void showResult(RouteCalculator route) {
             try {
-            // create a dialog displaying the results
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
-            dialogBuilder.setTitle(R.string.results);
+                // create a dialog displaying the results
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                dialogBuilder.setTitle(R.string.results);
 
-            // display distanceTraveled traveled and average speed
-            dialogBuilder.setMessage(String.format(getResources().getString(R.string.results_format),
-                    route.getDistanceKM(),
-                    route.getDistanceMI(),
-                    route.getSpeedKM(),
-                    route.getSpeedMI()));
-            dialogBuilder.setPositiveButton(R.string.button_ok, null);
-            dialogBuilder.show(); // display the dialog
+                // display distanceTraveled traveled and average speed
+                dialogBuilder.setMessage(String.format(getResources().getString(R.string.results_format),
+                        route.getDistanceKM(),
+                        route.getDistanceMI(),
+                        route.getSpeedKM(),
+                        route.getSpeedMI()));
+                dialogBuilder.setPositiveButton(R.string.button_ok, null);
+                dialogBuilder.show(); // display the dialog
             }
             catch(Exception ex) {
                 Log.e(MODULE_TAG, ex.getMessage());
@@ -452,7 +456,7 @@ public class MainActivity extends Activity {
     /**
      * Inner Class: SystemUiHider_Runnable
      *
-     * Description:  Class implements a runnable for hiding he UI
+     * Description: Class implements a runnable for hiding he UI
      */
     private class SystemUiHider_Runnable implements Runnable {
         @Override
