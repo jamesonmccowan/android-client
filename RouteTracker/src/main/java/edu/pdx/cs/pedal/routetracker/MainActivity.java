@@ -3,14 +3,19 @@ package edu.pdx.cs.pedal.routetracker;
 import android.app.*;
 import edu.pdx.cs.pedal.routetracker.util.SystemUiHider;
 import android.annotation.TargetApi;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.util.Log;
 
@@ -77,6 +82,7 @@ public class MainActivity extends Activity {
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.fullscreen_content);
         Button maps = (Button) findViewById(R.id.maps);
+        Button clipping = (Button) findViewById(R.id.clipping);
 
         // Set up an instance of SystemUiHider to control the system UI for this activity
         mSystemUiHider = SystemUiHider.getInstance(this, contentView, HIDER_FLAGS);
@@ -114,6 +120,68 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), Maps.class);
                 startActivityForResult(intent, 0);
+            }
+        });
+
+        clipping.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View arg0) {
+                // get prompts.xml view
+                LayoutInflater li = LayoutInflater.from(arg0.getContext());
+                View clipping_view = li.inflate(R.layout.activity_clipping, null);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        arg0.getContext());
+
+                alertDialogBuilder.setView(clipping_view);
+
+                final EditText userInput_start_clipping = (EditText) clipping_view
+                        .findViewById(R.id.start_clipping);
+                userInput_start_clipping.setRawInputType(Configuration.KEYBOARD_12KEY);
+
+                final String start_clipping = userInput_start_clipping.getText().toString();
+
+                final EditText userInput_end_clipping = (EditText) clipping_view
+                        .findViewById(R.id.end_clipping);
+                userInput_end_clipping.setRawInputType(Configuration.KEYBOARD_12KEY);
+                final String end_clipping = userInput_end_clipping.getText().toString();
+
+                // set dialog message
+                alertDialogBuilder
+                        .setCancelable(false)
+                        .setPositiveButton("OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        // get user input and set it to result
+                                        // edit text
+                                        if (start_clipping.matches("")) {
+                                            Toast.makeText(arg0.getContext(),
+                                                    "You didn't input the clipping",
+                                                    Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
+                                        if (end_clipping.matches("")){
+                                            Toast.makeText(arg0.getContext(),
+                                                    "You didn't input the clipping",
+                                                    Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
+                                        routeTracker.setStartpoint(Double.parseDouble(start_clipping));
+                                        routeTracker.setEndpoint(Double.parseDouble(end_clipping));
+                                    }
+                                })
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                // create alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                // show it
+                alertDialog.show();
             }
         });
     }
