@@ -1,4 +1,4 @@
-package com.pedalportland.routetracker;
+package edu.pdx.cs.pedal.routetracker;
 
 /**
  * This class extends the <code>RuntimeException<code/> class, and
@@ -10,36 +10,36 @@ package com.pedalportland.routetracker;
  * created 2/14/14
  */
 
-public class RouteTrackerExceptionNoProvider extends RuntimeException  {
+public class RouteTrackerExceptionWakeLock extends RuntimeException  {
 
     /**
-     * Constructs a new {@code RouteTrackerExceptionNoProvider} with the current stack
+     * Constructs a new {@code RouteTrackerExceptionWakeLock} with the current stack
      * trace and the specified detail message.
      */
-    public RouteTrackerExceptionNoProvider() {
+    public RouteTrackerExceptionWakeLock() {
         super();
     }
 
     /**
-     * Constructs a new {@code RouteTrackerExceptionNoProvider} with the current stack
+     * Constructs a new {@code RouteTrackerExceptionWakeLock} with the current stack
      * trace and the specified detail message.
      *
      * @param detailMessage
      *            the detail message for this exception.
      */
-    public RouteTrackerExceptionNoProvider(String detailMessage) {
+    public RouteTrackerExceptionWakeLock(String detailMessage) {
         super(detailMessage);
     }
 
     /**
-     * Constructs a new {@code RouteTrackerExceptionNoProvider} with the current stack trace
+     * Constructs a new {@code RouteTrackerExceptionWakeLock} with the current stack trace
      * and the specified cause.
      *
      * @param cause
      *            the optional cause of this exception, may be {@code null}.
      * @since 1.5
      */
-    public RouteTrackerExceptionNoProvider(Throwable cause) {
+    public RouteTrackerExceptionWakeLock(Throwable cause) {
         super((cause == null ? null : cause.toString()), cause);
     }
 }

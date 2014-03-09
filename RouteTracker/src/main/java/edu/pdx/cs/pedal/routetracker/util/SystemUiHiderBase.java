@@ -1,4 +1,4 @@
-package com.pedalportland.routetracker.util;
+package edu.pdx.cs.pedal.routetracker.util;
 
 import android.app.Activity;
 import android.view.View;

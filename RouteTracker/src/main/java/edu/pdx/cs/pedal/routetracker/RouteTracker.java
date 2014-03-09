@@ -1,5 +1,7 @@
-package com.pedalportland.routetracker;
+package edu.pdx.cs.pedal.routetracker;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.os.Bundle;
 import android.location.Criteria;
 import android.location.LocationManager;
@@ -26,6 +28,8 @@ public class RouteTracker {
     private boolean gpsFix;                         // whether we have a GPS fix for accurate data
     private RouteCalculator route = new RouteCalculator();
     private String provider = null;
+    private NotificationManager notificationManager = null;
+    private Notification.Builder builder = null;
 
     /**
      * <code>RouteTracker<code/> constructor. This procedure initializes the class instance,
@@ -33,7 +37,12 @@ public class RouteTracker {
      * by the main application.
      * @throws NullPointerException
      */
-    public RouteTracker(LocationManager locationManager, PowerManager powerManager) {
+    public RouteTracker(
+            LocationManager locationManager,
+            PowerManager powerManager,
+            NotificationManager notificationManager,
+            Notification.Builder builder
+    ) {
 
         if (null == locationManager) {
             throw new NullPointerException();
@@ -43,11 +52,23 @@ public class RouteTracker {
             throw new NullPointerException();
         }
 
+        if (null == notificationManager){
+            throw new NullPointerException();
+        }
+
+        if (null == builder){
+            throw new NullPointerException();
+        }
+
         // Copy reference to LocationManager
         this.locationManager = locationManager;
 
         // Copy reference to PowerManager
         this.powerManager = powerManager;
+
+        this.notificationManager = notificationManager;
+
+        this.builder = builder;
     }
 
     /**
@@ -124,6 +145,7 @@ public class RouteTracker {
 
         // Reset route information
         route.start();
+        notificationManager.notify(MainActivity.NOTIFICATION_CODE, builder.build());
 
         try {
             // Listen for changes in location as often as possible (throws java.lang.IllegalArgumentException)
@@ -156,6 +178,7 @@ public class RouteTracker {
         finally {
             // Release the wakelock
             wakeLock.release();
+            notificationManager.cancel(MainActivity.NOTIFICATION_CODE);
 
             // Terminate collection of route information.  Note that this causes
             // calculations to occur in RouteCalculator class

@@ -1,4 +1,4 @@
-package com.pedalportland.routetracker;
+package edu.pdx.cs.pedal.routetracker;
 
 /**
  * This class extends the <code>RuntimeException<code/> class, and implements
@@ -10,36 +10,36 @@ package com.pedalportland.routetracker;
  * created 3/1/14
  */
 
-public class RideInfoMgrException extends RuntimeException {
+public class UploadServiceException extends RuntimeException {
 
     /**
-     * Constructs a new {@code RideInfoMgrException} with the current stack
+     * Constructs a new {@code UploadServiceException} with the current stack
      * trace and the specified detail message.
      */
-    public RideInfoMgrException() {
+    public UploadServiceException() {
         super();
     }
 
     /**
-     * Constructs a new {@code RideInfoMgrException} with the current stack
+     * Constructs a new {@code UploadServiceException} with the current stack
      * trace and the specified detail message.
      *
      * @param detailMessage
      *            the detail message for this exception.
      */
-    public RideInfoMgrException(String detailMessage) {
+    public UploadServiceException(String detailMessage) {
         super(detailMessage);
     }
 
     /**
-     * Constructs a new {@code RideInfoMgrException} with the current stack trace
+     * Constructs a new {@code UploadServiceException} with the current stack trace
      * and the specified cause.
      *
      * @param cause
      *            the optional cause of this exception, may be {@code null}.
      * @since 1.5
      */
-    public RideInfoMgrException(Throwable cause) {
-        super(cause);
+    public UploadServiceException(Throwable cause) {
+        super((cause == null ? null : cause.toString()), cause);
     }
 }

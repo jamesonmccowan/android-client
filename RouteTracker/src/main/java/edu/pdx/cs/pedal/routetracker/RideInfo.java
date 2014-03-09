@@ -1,4 +1,4 @@
-package com.pedalportland.routetracker;
+package edu.pdx.cs.pedal.routetracker;
 
 import java.io.File;
 import java.io.FileReader;
