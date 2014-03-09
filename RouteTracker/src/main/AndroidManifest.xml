@@ -35,7 +35,8 @@
         android:icon="@drawable/bike"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        android:name="com.pedalportland.routetracker.MyApplication">
+        android:name="edu.pdx.cs.pedal.routetracker.MyApplication"
+        android:debuggable="false">
         <activity
             android:launchMode="singleTop"
             android:name="edu.pdx.cs.pedal.routetracker.MainActivity"
