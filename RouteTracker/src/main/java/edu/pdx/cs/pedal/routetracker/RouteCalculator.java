@@ -1,6 +1,10 @@
 package edu.pdx.cs.pedal.routetracker;
 
+import android.content.pm.LabeledIntent;
 import android.location.Location;
+
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.List;
 import java.util.ArrayList;
 import org.joda.time.DateTime;
@@ -31,6 +35,8 @@ public class RouteCalculator {
     private double speedKM;     // Average speed in kilometers/Hour
     private double distanceMI;  // Total distance in miles
     private double speedMI;     // Average speed in miles/Hour
+    private static double startpoint;
+    private static double endpoint;
 
     /**
      * Instantiates an instance of a <code>RouteCalculator</code>
@@ -170,15 +176,15 @@ public class RouteCalculator {
      */
     public static String toJSON(List<Location> locations) {
         JSONArray points = new JSONArray();
-
+        locations = clipping(locations);
         for(Location point : locations) {
             JSONObject obj = new JSONObject();
             obj.put("time", (new DateTime(point.getTime())).toString()); // convert from UTC time, in milliseconds since January 1, 1970 to ISO 8601
             obj.put("latitude", point.getLatitude());
             obj.put("longitude", point.getLongitude());
             obj.put("accuracy", point.getAccuracy());
-            points.add(obj);
-        }
+            points.add(obj);}
+
         JSONObject route = new JSONObject();
         route.put("points", points);
         route.put("version", JSON_VERSION);
@@ -186,4 +192,72 @@ public class RouteCalculator {
 
         return route.toString();
     }
+
+    public static double converttoRad(double x) {return x * Math.PI/180;}
+
+    public static List<Location> clipping(List<Location> locations){
+        double R = 3958.756; // Radius of earth in miles
+        double distance_end = 0;
+        double distance_start = 0;
+
+        // this is the method to clip the route from start point
+        for (int index = 0; index <= locations.size()- 1; index++){
+            double dLat = converttoRad(locations.get(index +1).getLatitude() -
+                    locations.get(index).getLatitude());
+            double dLong = converttoRad(locations.get(index +1).getLongitude() -
+                    locations.get(index).getLongitude());
+            double curr_distance = Math.pow(Math.sin(dLat/2),2) +
+                    Math.cos(converttoRad(locations.get(index).getLatitude())) *
+                            Math.cos(converttoRad(locations.get(index+1).getLatitude())) *
+                            Math.pow(Math.sin(dLong/2),2);
+            double curr1_distance = 2 * Math.atan2(Math.sqrt(curr_distance),Math.sqrt(1-curr_distance));
+            distance_start += R * curr1_distance;
+
+            if(distance_start >= startpoint){
+                if (index == 0) {
+                    locations.remove(0);
+                    break;}
+                else{
+                    List<Location> sublocation = new ArrayList<Location>(
+                            locations.subList(0,index));
+                    locations.removeAll(sublocation);
+                    break;}}
+        }
+
+        // this is the method to clip the route from end point
+        for (int index = locations.size() -1; index >= 0; index--){
+            double dLat = converttoRad(locations.get(index -1).getLatitude() -
+                    locations.get(index).getLatitude());
+            double dLong = converttoRad(locations.get(index -1).getLongitude() -
+                    locations.get(index).getLongitude());
+            double curr_distance = Math.pow(Math.sin(dLat/2),2) +
+                    Math.cos(converttoRad(locations.get(index).getLatitude())) *
+                    Math.cos(converttoRad(locations.get(index - 1).getLatitude())) *
+                    Math.pow(Math.sin(dLong/2),2);
+            double curr1_distance = 2 * Math.atan2(Math.sqrt(curr_distance),Math.sqrt(1-curr_distance));
+            distance_end += R * curr1_distance;
+
+            if (distance_end >= endpoint)
+            {
+                if(index == locations.size() - 1) {
+                    locations.remove(locations.size() - 1);
+                    break;}
+                else{
+                List<Location> sublocation = new ArrayList<Location>(
+                        locations.subList(index +1, locations.size()-1));
+                locations.removeAll(sublocation);
+                break;}}
+        }
+        return locations;
+    }
+
+    public double getStartpoint () {return this.startpoint;}
+
+    public void setStartpoint (double StartPoint){ this.startpoint = StartPoint;
+    System.out.println(this.startpoint);}
+
+    public double getEndpoint () {return this.endpoint;}
+
+    public void setEndpoint(double EndPoint) {this.endpoint = EndPoint;
+        System.out.println(this.startpoint);}
 }
