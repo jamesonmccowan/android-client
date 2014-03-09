@@ -64,17 +64,6 @@
                 android:layout_marginTop="220dp"
                 android:textColor="#ffffff" />
 
-            <TextView android:id="@+id/mxSpeed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:keepScreenOn="true"
-                android:textSize="24sp"
-                android:gravity="center"
-                android:text="Max Speed: 8mph"
-                android:layout_gravity="right|top"
-                android:layout_marginTop="270dp"
-                android:textColor="#ffffff" />
-
             <TextView android:id="@+id/food"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -83,7 +72,7 @@
                 android:gravity="center"
                 android:text="Burritos burned off: 0.4"
                 android:layout_gravity="right|top"
-                android:layout_marginTop="320dp"
+                android:layout_marginTop="270dp"
                 android:textColor="#ffffff"
                 android:layout_marginBottom="50dp" />
         </FrameLayout>

@@ -19,6 +19,7 @@ public class RouteCalculator {
     private boolean isTracking;     // Whether app is currently tracking
     private long startTime;         // Time (in milliseconds) when tracking starts
     private long distanceTraveled;  // Distance traveled by user in meters
+    private double expiredTime;     // time the ride took (in hours)
 
     // Constants used in calculating total route distance and average speed
     private static final double MILLISECONDS_PER_HOUR = 1000 * 60 * 60;
@@ -44,6 +45,7 @@ public class RouteCalculator {
      * Instantiates an instance of a <code>RouteCalculator</code> from a file
      */
     public RouteCalculator(String fileDirectory, String fileName) {
+
         // Load JSON file here
     }
 
@@ -68,6 +70,7 @@ public class RouteCalculator {
         speedKM = 0.0;
         distanceMI = 0.0;
         speedMI = 0.0;
+        expiredTime = 0;
     }
 
     /**
@@ -89,7 +92,7 @@ public class RouteCalculator {
         if (isTracking) {
             // compute the total time we were isTracking
             long currentTime = System.currentTimeMillis();
-            double expiredTime = ((double)currentTime - (double)startTime) / MILLISECONDS_PER_HOUR;
+            expiredTime = ((double)currentTime - (double)startTime) / MILLISECONDS_PER_HOUR;
             assert(expiredTime >= 0.0);
 
             isTracking = false;
@@ -138,6 +141,14 @@ public class RouteCalculator {
     public double getSpeedMI() {
         assert(!isTracking);
         return speedMI;
+    }
+
+    /**
+     * Returns time riding in hours.
+     */
+    public double getExpiredTime() {
+        assert(!isTracking);
+        return expiredTime;
     }
 
     /**

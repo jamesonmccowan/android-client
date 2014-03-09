@@ -1,11 +1,16 @@
 package edu.pdx.cs.pedal.routetracker;
 
 import java.io.File;
+import org.joda.time.DateTime;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+
+import android.location.Location;
 import android.util.Log;
 
 /**
@@ -19,16 +24,24 @@ public class RideInfo {
     private static final String MODULE_TAG = "RideInfo";
     private static final String JSON_FIELD_VERSION = "version";
     private static final String JSON_FIELD_DISTANCE_KM = "distanceKM";
+    private static final String JSON_FIELD_DISTANCE_MI = "distanceMI";
+    private static final String JSON_FIELD_DATE = "date";
+    private static final String JSON_FIELD_TIME = "time";
     private static final String JSON_FIELD_SPEED_KM = "speedKM";
+    private static final String JSON_FIELD_SPEED_MI = "speedMI";
 
     private final String name;
     private final String dirName;
 
     // Parameters to save
-    private final static String VERSION = "0.0";
+    private final static String VERSION = "0.1";
 
     private double distanceKM = 0.0;
+    private double distanceMI = 0.0;
+    private DateTime date = null;
+    private double time = 0.0;
     private double speedKM = 0.0;
+    private double speedMI = 0.0;
 
     /**
      * Creates an instance of RideInfo
@@ -40,7 +53,15 @@ public class RideInfo {
         this.name = name;
         this.dirName = dirName;
         distanceKM = ride.getDistanceKM();
+        distanceMI = ride.getDistanceMI();
         speedKM = ride.getSpeedKM();
+        speedMI = ride.getSpeedMI();
+        time = ride.getExpiredTime();
+        try {
+            date = new DateTime(((List<Location>) ride.getRoute()).get(0).getTime());
+        } catch (Exception ex) {
+            date = null;
+        }
     }
 
     /**
@@ -61,7 +82,11 @@ public class RideInfo {
         this.name = r.name;
         this.dirName = r.dirName;
         this.distanceKM = r.distanceKM;
+        this.distanceKM = r.distanceMI;
         this.speedKM = r.speedKM;
+        this.speedMI = r.speedMI;
+        this.time = r.time;
+        this.date = r.date;
     }
 
     /**
@@ -76,8 +101,22 @@ public class RideInfo {
      *
      * @return
      */
-    public double getDistanceKM() {
-        return distanceKM;
+    public double getDistanceKM() { return distanceKM; }
+
+    /**
+     *
+     * @return
+     */
+    public double getDistanceMI() {
+        return distanceMI;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public double getSpeedMI() {
+        return speedMI;
     }
 
     /**
@@ -92,11 +131,28 @@ public class RideInfo {
      *
      * @return
      */
+    public DateTime getDate() { return date; }
+
+    /**
+     *
+     * @return
+     */
+    public double getTime() { return time; }
+
+    /**
+     *
+     * @return
+     */
     private String toJSON() {
         JSONObject rideInfo = new JSONObject();
         rideInfo.put(JSON_FIELD_VERSION, VERSION);
         rideInfo.put(JSON_FIELD_DISTANCE_KM, distanceKM);
+        rideInfo.put(JSON_FIELD_DISTANCE_MI, distanceMI);
+        if(date != null)
+            rideInfo.put(JSON_FIELD_DATE, date.getMillis());
+        rideInfo.put(JSON_FIELD_TIME, time);
         rideInfo.put(JSON_FIELD_SPEED_KM, speedKM);
+        rideInfo.put(JSON_FIELD_SPEED_MI, speedMI);
         return rideInfo.toString();
     }
 
@@ -133,6 +189,18 @@ public class RideInfo {
                 String version = (String) jsonObject.get(JSON_FIELD_VERSION);
                 distanceKM = ((Double) jsonObject.get(JSON_FIELD_DISTANCE_KM)).doubleValue();
                 speedKM = ((Double) jsonObject.get(JSON_FIELD_SPEED_KM)).doubleValue();
+
+                if (jsonObject.containsKey(JSON_FIELD_DISTANCE_MI))
+                    distanceMI = ((Double) jsonObject.get(JSON_FIELD_DISTANCE_MI)).doubleValue();
+
+                if (jsonObject.containsKey(JSON_FIELD_SPEED_MI))
+                    speedMI = ((Double) jsonObject.get(JSON_FIELD_SPEED_MI)).doubleValue();
+
+                if (jsonObject.containsKey(JSON_FIELD_DATE))
+                    date = new DateTime(((Double) jsonObject.get(JSON_FIELD_DATE)).longValue());
+
+                if (jsonObject.containsKey(JSON_FIELD_TIME))
+                    time = ((Double) jsonObject.get(JSON_FIELD_TIME)).doubleValue();
 
                 if (version.equals(VERSION))
                     loaded = true;
