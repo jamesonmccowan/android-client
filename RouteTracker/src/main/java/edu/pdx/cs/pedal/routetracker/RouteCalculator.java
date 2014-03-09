@@ -3,6 +3,9 @@ package edu.pdx.cs.pedal.routetracker;
 import android.location.Location;
 import java.util.List;
 import java.util.ArrayList;
+import org.joda.time.DateTime;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  * This class collects route data and implements the calculation of total distance travelled
@@ -12,6 +15,7 @@ import java.util.ArrayList;
  */
 public class RouteCalculator {
 
+    private static final String JSON_VERSION = "0.4";
     private boolean isTracking;     // Whether app is currently tracking
     private long startTime;         // Time (in milliseconds) when tracking starts
     private long distanceTraveled;  // Distance traveled by user in meters
@@ -34,6 +38,20 @@ public class RouteCalculator {
     public RouteCalculator() {
         route = new ArrayList<Location>();
         this.reset();
+    }
+
+    /**
+     * Instantiates an instance of a <code>RouteCalculator</code> from a file
+     */
+    public RouteCalculator(String fileDirectory, String fileName) {
+        // Load JSON file here
+    }
+
+    /**
+     *
+     */
+    public void loadFromDisk() {
+
     }
 
     /**
@@ -80,6 +98,14 @@ public class RouteCalculator {
             distanceMI = distanceKM * MILES_PER_KILOMETER;
             speedMI = distanceMI / expiredTime;
         }
+    }
+
+    /**
+     *
+     * @return
+     */
+    public long getStartTime() {
+        return startTime;
     }
 
     /**
@@ -135,5 +161,29 @@ public class RouteCalculator {
      */
     public List getRoute() {
         return route;
+    }
+
+    /**
+     *
+     * @param locations
+     * @return
+     */
+    public static String toJSON(List<Location> locations) {
+        JSONArray points = new JSONArray();
+
+        for(Location point : locations) {
+            JSONObject obj = new JSONObject();
+            obj.put("time", (new DateTime(point.getTime())).toString()); // convert from UTC time, in milliseconds since January 1, 1970 to ISO 8601
+            obj.put("latitude", point.getLatitude());
+            obj.put("longitude", point.getLongitude());
+            obj.put("accuracy", point.getAccuracy());
+            points.add(obj);
+        }
+        JSONObject route = new JSONObject();
+        route.put("points", points);
+        route.put("version", JSON_VERSION);
+        route.put("hash", locations.hashCode());
+
+        return route.toString();
     }
 }

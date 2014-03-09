@@ -43,6 +43,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:enabled="true"
+            android:name=".UploadService"
+            android:permission="edu.pdx.cs.pedal.routetracker"/>
 
         <activity android:name=".Maps"></activity>
         <activity android:name=".RideListActivity"></activity>
