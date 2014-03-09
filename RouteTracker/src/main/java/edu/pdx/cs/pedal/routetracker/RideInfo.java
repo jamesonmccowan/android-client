@@ -9,7 +9,7 @@ import org.json.simple.parser.JSONParser;
 import android.util.Log;
 
 /**
- * This class is used to maintain persistent ride information data.
+ * This class is used to persist ride data.
  * @author robin5 (Robin Murray)
  * @version 1.0
  * created 3/1/14
@@ -18,94 +18,159 @@ public class RideInfo {
 
     private static final String MODULE_TAG = "RideInfo";
     private static final String JSON_FIELD_VERSION = "version";
-    private static final String JSON_FIELD_DISTANCE_KM = "distanceKM";
-    private static final String JSON_FIELD_SPEED_KM = "speedKM";
+    private static final String JSON_FIELD_START_TIME = "startTime";
+    private static final String JSON_FIELD_RIDE_TIME = "rideTime";
+    private static final String JSON_FIELD_DISTANCE_MI = "distanceMI";
+    private static final String JSON_FIELD_AVG_SPEED_MPH = "avgSpeedMPH";
+    private static final String JSON_FIELD_MAX_SPEED_MPH = "maxSpeedMPH";
+    private static final String JSON_FIELD_URL = "url";
 
-    private final String name;
+    private static final String JSON_FIELD_DISTANCE_KM = "distanceKM";
+    private static final String JSON_FIELD_AVG_SPEED_KPH = "speedKM";
+
+    private static final double MILES_PER_KILOMETER = 0.621371192;
+
+    private final String rideId;
     private final String dirName;
 
     // Parameters to save
-    private final static String VERSION = "0.0";
+    private static final String VERSION_0_0 = "0.0";
+    private static final String VERSION_0_1 = "0.1";
+    private static final String CURRENT_VERSION = VERSION_0_1;
 
-    private double distanceKM = 0.0;
-    private double speedKM = 0.0;
+    private long startTime = 0;
+    private long rideTime = 0;
+    private double distanceMI = 0.0;
+    private double avgSpeedMPH = 0.0;
+    private double maxSpeedMPH = 0.0;
+    private String url = null;
 
     /**
      * Creates an instance of RideInfo
-     * @param ride
-     * @param dirName
-     * @param name
+     * @param ride the ride to get the information from
+     * @param dirName the directory where this file should be stored when persisted
+     * @param rideId The ride identifier and rideId of file that will be persisted
      */
-    public RideInfo(RouteCalculator ride, String dirName, String name) {
-        this.name = name;
+    public RideInfo(RouteCalculator ride, String dirName, String rideId) {
+        this.rideId = rideId;
         this.dirName = dirName;
-        distanceKM = ride.getDistanceKM();
-        speedKM = ride.getSpeedKM();
+        this.startTime = ride.getStartTime();
+        this.rideTime = ride.getRideTime();
+        this.distanceMI = ride.getDistanceMI();
+        this.avgSpeedMPH = ride.getSpeedMI();
+        this.maxSpeedMPH = ride.getMaxSpeedMI();
     }
 
     /**
-     *
-     * @param dirName
-     * @param name
+     * Constructs an instance of the class specifying directory and rideId to use for file
+     * @param dirName The directory where the file is stored
+     * @param rideId The rideId is used as the name of the persisted file.
      */
-    public RideInfo(String dirName, String name) {
-        this.name = name;
+    public RideInfo(String dirName, String rideId) {
+        this.rideId = rideId;
         this.dirName = dirName;
     }
 
     /**
-     *
-     * @param r
+     * Constructs an instance copy of the class
+     * @param r the instance to copy
      */
     public RideInfo(RideInfo r) {
-        this.name = r.name;
+        this.rideId = r.rideId;
         this.dirName = r.dirName;
-        this.distanceKM = r.distanceKM;
-        this.speedKM = r.speedKM;
+        this.startTime = r.startTime;
+        this.rideTime = r.rideTime;
+        this.distanceMI = r.distanceMI;
+        this.avgSpeedMPH = r.avgSpeedMPH;
+        this.maxSpeedMPH = r.maxSpeedMPH;
+        this.url = r.url;
     }
 
     /**
-     *
-     * @return
+     * Returns the identifier associated with the ride
+     * @return Returns the identifier associated with the ride
      */
-    public String getName() {
-        return name;
+    public String getRideId() {
+        return rideId;
     }
 
     /**
-     *
-     * @return
+     * Returns the startTime of the ride.
+     * @return Returns the startTime of the ride.
      */
-    public double getDistanceKM() {
-        return distanceKM;
+    public long getStartTime() {
+        return startTime;
     }
 
     /**
-     *
-     * @return
+     * Returns the rideTime of the ride.
+     * @return Returns the rideTime of the ride.
      */
-    public double getSpeedKM() {
-        return speedKM;
+    public long getRideTime() {
+        return rideTime;
     }
 
     /**
-     *
-     * @return
+     * Returns the ride distance in miles.
+     * @return Returns the ride distance in miles.
+     */
+    public double getDistanceMI() {
+        return distanceMI;
+    }
+
+    /**
+     * Returns the average speed of the ride in miles per hour.
+     * @return Returns the average speed of the ride in miles per hour.
+     */
+    public double getAvgSpeedMPH() {
+        return avgSpeedMPH;
+    }
+
+    /**
+     * Returns the max speed of the ride in miles per hour.
+     * @return Returns the max speed of the ride in miles per hour.
+     */
+    public double getMaxSpeedMPH() {
+        return maxSpeedMPH;
+    }
+
+    /**
+     * Returns the url returned from the web site.
+     * @return Returns the url returned from the web site.
+     */
+    public String getURL() {
+        return url;
+    }
+
+    /**
+     * Sets the url returned from the web site.
+     */
+    public void setURL(String url) {
+        this.url = url;
+    }
+
+    /**
+     * Translates this object into JSON
+     * @return Returns the JSON translation
      */
     private String toJSON() {
-        JSONObject rideInfo = new JSONObject();
-        rideInfo.put(JSON_FIELD_VERSION, VERSION);
-        rideInfo.put(JSON_FIELD_DISTANCE_KM, distanceKM);
-        rideInfo.put(JSON_FIELD_SPEED_KM, speedKM);
-        return rideInfo.toString();
+        JSONObject json = new JSONObject();
+        json.put(JSON_FIELD_VERSION, CURRENT_VERSION);
+        json.put(JSON_FIELD_START_TIME, startTime);
+        json.put(JSON_FIELD_RIDE_TIME, rideTime);
+        json.put(JSON_FIELD_DISTANCE_MI, distanceMI);
+        json.put(JSON_FIELD_AVG_SPEED_MPH, avgSpeedMPH);
+        json.put(JSON_FIELD_MAX_SPEED_MPH, maxSpeedMPH);
+        json.put(JSON_FIELD_URL, url);
+        return json.toString();
     }
 
     /**
-     *
+     * Load the ride information from the persisted file.
      */
     public boolean loadFromDisk() {
 
-        File file = new File(dirName, name);
+        File file = new File(dirName, rideId);
         FileReader fr = null;
         char buff[] = new char[512];
         StringBuilder sb = new StringBuilder();
@@ -125,20 +190,45 @@ public class RideInfo {
             JSONParser parser = new JSONParser();
             jsonObject = (JSONObject) parser.parse(sb.toString());
 
-            // Validate presence of JSON fields
-            if (jsonObject.containsKey(JSON_FIELD_VERSION) &&
-                jsonObject.containsKey(JSON_FIELD_DISTANCE_KM) &&
-                jsonObject.containsKey(JSON_FIELD_SPEED_KM)) {
+            if (!jsonObject.containsKey(JSON_FIELD_VERSION)) {
+                return false;
+            }
+            String version = (String) jsonObject.get(JSON_FIELD_VERSION);
 
-                String version = (String) jsonObject.get(JSON_FIELD_VERSION);
-                distanceKM = ((Double) jsonObject.get(JSON_FIELD_DISTANCE_KM)).doubleValue();
-                speedKM = ((Double) jsonObject.get(JSON_FIELD_SPEED_KM)).doubleValue();
+            if (version.equals(VERSION_0_0)) {
+                // Validate presence of JSON fields
+                if (jsonObject.containsKey(JSON_FIELD_DISTANCE_KM) &&
+                    jsonObject.containsKey(JSON_FIELD_AVG_SPEED_KPH)) {
 
-                if (version.equals(VERSION))
+                    startTime = 0;
+                    rideTime = 0;
+                    distanceMI = ((Double) jsonObject.get(JSON_FIELD_DISTANCE_KM)).doubleValue() * MILES_PER_KILOMETER;
+                    avgSpeedMPH = ((Double) jsonObject.get(JSON_FIELD_AVG_SPEED_KPH)).doubleValue() * MILES_PER_KILOMETER;
+                    maxSpeedMPH = 0;
+                    url = null;
                     loaded = true;
+                }
+            }
+            else if (version.equals(VERSION_0_1)) {
+                if (jsonObject.containsKey(JSON_FIELD_START_TIME) &&
+                    jsonObject.containsKey(JSON_FIELD_RIDE_TIME) &&
+                    jsonObject.containsKey(JSON_FIELD_DISTANCE_MI) &&
+                    jsonObject.containsKey(JSON_FIELD_AVG_SPEED_MPH) &&
+                    jsonObject.containsKey(JSON_FIELD_MAX_SPEED_MPH) &&
+                    jsonObject.containsKey(JSON_FIELD_URL)) {
+
+                    startTime = ((Long) jsonObject.get(JSON_FIELD_START_TIME)).longValue();
+                    rideTime = ((Long) jsonObject.get(JSON_FIELD_RIDE_TIME)).longValue();
+                    distanceMI = ((Double) jsonObject.get(JSON_FIELD_DISTANCE_MI)).doubleValue();
+                    avgSpeedMPH = ((Double) jsonObject.get(JSON_FIELD_AVG_SPEED_MPH)).doubleValue();
+                    maxSpeedMPH = ((Double) jsonObject.get(JSON_FIELD_MAX_SPEED_MPH)).doubleValue();
+                    url = (String) jsonObject.get(JSON_FIELD_URL);
+                    loaded = true;
+                }
             }
         }
         catch(Exception ex) {
+            Log.d(MODULE_TAG, ex.getMessage());
         }
         finally {
             // close the reader
@@ -154,43 +244,39 @@ public class RideInfo {
     }
 
     /**
-     *
+     * Saves this object to disk
      */
-    public void saveToDisk() {
+    public boolean saveToDisk() {
 
         // If a file already exists, delete it.
-        File file = new File(dirName, name);
+        File file = new File(dirName, rideId);
         if (file.exists())
             if (!file.delete())
-                return;
+                return false;
 
         // Write data to file (JSON format)
-        FileWriter fw = null;
+        FileWriter fw;
         try {
             if (null != (fw = new FileWriter(file))) {
                 String toJson = this.toJSON();
                 fw.write(toJson);
+                fw.close();
+                return true;
             }
         }
         catch(IOException ex) {
             throw new RideInfoException(ex);
         }
-        finally {
-            try {
-                if (null != fw)
-                    fw.close();
-            }
-            catch(IOException ex) {
-                Log.e(MODULE_TAG, ex.getMessage());
-            }
-        }
+        return false;
     }
 
     /**
-     *
+     * Removes the file associated with this object from disk
      */
     public void removeFromDisk() {
-        File file = new File(dirName, name);
-        file.delete();
+        File file = new File(dirName, rideId);
+        if (file.exists())
+            if (!file.delete())
+                Log.d(MODULE_TAG, "Could not delete file: " + rideId);
     }
 }
