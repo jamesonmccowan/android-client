@@ -44,10 +44,7 @@
                 android:textOff="@string/button_start_tracking"
                 android:layout_gravity="bottom|right"
                 android:layout_weight="1"/>
-
-
         </LinearLayout>
-
 
         <Button
             style="?android:attr/buttonStyleSmall"
