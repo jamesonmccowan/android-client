@@ -1,4 +1,4 @@
-package com.pedalportland.routetracker;
+package edu.pdx.cs.pedal.routetracker;
 
 /**
  * Created on 2/28/14.

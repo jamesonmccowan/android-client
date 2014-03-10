@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">Pedal PDX</string>
+    <string name="app_name">PedalPDX</string>
     <string name="action_settings">Settings</string>
     <string name="button_start_tracking">Start Route</string>
     <string name="button_stop_tracking">Stop Route</string>
@@ -11,7 +10,7 @@
     <string name="toast_signal_acquired">GPS signal acquired</string>
     <string name="toast_signal_lost">GPS signal lost</string>
     <string name="button_ok">OK</string>
-    <string name="default_pedal_portland_url">http://api.pedal.cs.pdx.edu/rides</string>
+    <string name="pedalpdx_url">http://api.pedal.cs.pdx.edu/rides</string>
     <string name="settings">Settings</string>
     <string name="error_dialog_title">Error</string>
     <string name="info_dialog_title">Information</string>
