@@ -62,7 +62,7 @@ public class RideListActivity extends Activity {
                     // Start your Activity according to the item just clicked.
                     if (myApp != null && rides != null) {
                         Intent i = new Intent(getApplicationContext(), RideActivity.class);
-                        i.putExtra("rideId", rides[position].getRideId());
+                        i.putExtra("rideId", rides[rides.length-position-1].getRideId());
                         startActivity(i);
                     }
                 }
