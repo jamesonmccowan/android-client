@@ -459,7 +459,7 @@ public class MainActivity extends Activity {
 
     /* Creates the menu items */
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 0, 0, "List of Rides");
+        menu.add(0, 0, 0, R.string.menu_rideList);
         return true;
     }
 
