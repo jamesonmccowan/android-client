@@ -2,10 +2,10 @@ package edu.pdx.cs.pedal.routetracker;
 
 import android.location.Location;
 import android.util.Log;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import com.google.android.gms.maps.model.LatLng;
 import java.util.List;
 import java.util.ArrayList;
 import org.joda.time.DateTime;
@@ -48,6 +48,7 @@ public class RouteCalculator {
     private double distanceMI;  // Total distance in miles
     private double speedMI;     // Average speed in miles/Hour
     private double maxSpeedMPH;  // Maximum speed in miles/Hour
+    private static ArrayList<LatLng> trip = new ArrayList<LatLng>();
 
     /**
      * Instantiates an instance of a <code>RouteCalculator</code>
@@ -110,14 +111,13 @@ public class RouteCalculator {
             DateTime dateTime;
             Float accuracy;
 
-            for(int i = 0; i < size; ++i) {
-
-                JSONObject entry = (JSONObject) points.get(i);
+            for (Object point : points) {
+                JSONObject entry = (JSONObject) point;
 
                 dateTime = new DateTime(entry.get(JSON_FIELD_TIME));
-                latitude = ((Double) entry.get(JSON_FIELD_LATITUDE)).doubleValue();
-                longitude = ((Double) entry.get(JSON_FIELD_LONGITUDE)).doubleValue();
-                accuracy = (float)((Double) entry.get(JSON_FIELD_ACCURACY)).doubleValue();
+                latitude = (Double) entry.get(JSON_FIELD_LATITUDE);
+                longitude = (Double) entry.get(JSON_FIELD_LONGITUDE);
+                accuracy = (float) ((Double) entry.get(JSON_FIELD_ACCURACY)).doubleValue();
 
                 Location location = new Location("");
                 location.setAccuracy(accuracy);
@@ -319,6 +319,7 @@ public class RouteCalculator {
         JSONArray points = new JSONArray();
 
         for(Location point : locations) {
+            trip.add(new LatLng(point.getLatitude(),point.getLongitude()));
             JSONObject obj = new JSONObject();
             obj.put("time", (new DateTime(point.getTime())).toString()); // convert from UTC time, in milliseconds since January 1, 1970 to ISO 8601
             obj.put("latitude", point.getLatitude());
@@ -332,5 +333,10 @@ public class RouteCalculator {
         route.put("hash", locations.hashCode());
 
         return route.toString();
+    }
+
+    public static ArrayList<LatLng> gettrip()
+    {
+        return trip;
     }
 }
