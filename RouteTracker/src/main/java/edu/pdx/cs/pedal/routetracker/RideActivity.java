@@ -100,8 +100,8 @@ public class RideActivity extends Activity {
 
     /* Creates the menu items */
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 0, 0, "Ride Tracker");
-        menu.add(0, 1, 0, "List of Rides");
+        menu.add(0, 0, 0, R.string.menu_track);
+        menu.add(0, 1, 0, R.string.menu_rideList);
         return true;
     }
 

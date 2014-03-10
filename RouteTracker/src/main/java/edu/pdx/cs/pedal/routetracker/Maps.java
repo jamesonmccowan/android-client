@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -79,5 +81,28 @@ public class Maps extends Activity {
 
     public void setTrip(List<Location> Trip) {
         this.trip = LocationToLatLng(Trip);
+    }
+
+    /* Creates the menu items */
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 0, 0, R.string.menu_track);
+        menu.add(0, 1, 0, R.string.menu_rideList);
+        return true;
+    }
+
+    /* Handles item selections */
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent i;
+        switch (item.getItemId()) {
+            case 0:
+                i = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(i);
+                return true;
+            case 1:
+                i = new Intent(getApplicationContext(), RideListActivity.class);
+                startActivity(i);
+                return true;
+        }
+        return false;
     }
 }

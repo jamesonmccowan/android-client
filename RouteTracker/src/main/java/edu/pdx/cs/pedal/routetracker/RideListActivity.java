@@ -70,7 +70,7 @@ public class RideListActivity extends Activity {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 0, 0, "Ride Tracker");
+        menu.add(0, 0, 0, R.string.menu_track);
         return true;
     }
 
