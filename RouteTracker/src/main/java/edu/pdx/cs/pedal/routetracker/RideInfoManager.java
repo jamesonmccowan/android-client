@@ -1,10 +1,8 @@
 package edu.pdx.cs.pedal.routetracker;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * This class is used to maintain persistent ride information data.
@@ -14,12 +12,12 @@ import java.util.Map;
  */
 public class RideInfoManager {
 
-    private final Map<String, RideInfo> rideInfos = new HashMap<String, RideInfo>();
+    private final Map<String, RideInfo> rideInfos = new TreeMap<String, RideInfo>();
     private String rideInfoDirName = null;
 
     /**
-     *
-     * @param rideInfoDirName
+     * Constructs a new instance of RideInfoManager
+     * @param rideInfoDirName The directory where RideInfo files will be maintained
      * @throws RideInfoMgrException
      */
     public RideInfoManager(String rideInfoDirName) {
@@ -48,8 +46,9 @@ public class RideInfoManager {
             if (null != (fileNames = (new File(rideInfoDirName)).list())) {
                 for(String fileName: fileNames) {
                     rideInfo = new RideInfo(rideInfoDirName, fileName);
-                    if (rideInfo.loadFromDisk())
-                        rideInfos.put(rideInfo.getName(), rideInfo);
+                    if (rideInfo.loadFromDisk()) {
+                        rideInfos.put(rideInfo.getRideId(), rideInfo);
+                    }
                 }
             }
         }
@@ -59,10 +58,30 @@ public class RideInfoManager {
     }
 
     /**
-     *
-     * @param ride
-     * @param fileName
-     * @return
+     * Scans the RideInfo entries for blank url fields, and fills them if they exist
+     * @param urlInfoManager The object that manages the URLs returned from the web site
+     */
+    public void setUrls(UrlInfoManager urlInfoManager) {
+
+        String url;
+
+        for (RideInfo r: rideInfos.values()) {
+            if (null == r.getURL()) {
+                if (null != (url = urlInfoManager.getUrl(r.getRideId()))) {
+                    r.setURL(url);
+                    if (r.saveToDisk()) {
+                        urlInfoManager.deleteUrl(url);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds a ride information record and persist the data to disk
+     * @param ride the ride to get the information from
+     * @param fileName the file to persist the data to
+     * @return returns a reference to the new information record
      */
     public RideInfo addRideInfo(RouteCalculator ride, String fileName) {
         RideInfo rideInfo = new RideInfo(ride, rideInfoDirName, fileName);
@@ -72,28 +91,61 @@ public class RideInfoManager {
     }
 
     /**
-     *
-     * @return
+     * Returns the list of all rideInfo records
+     * @return Returns the list of all rideInfo records
      */
-    public List<RideInfo> getRideInfos() {
+    public RideInfo[] getRideInfos() {
 
-        // Create List
-        List<RideInfo> rideInfoList = new ArrayList<RideInfo>(rideInfos.size());
+        int size = rideInfos.values().size();
 
-        for (RideInfo r: rideInfos.values())
-            rideInfoList.add(new RideInfo(r));
-        return rideInfoList;
+        RideInfo aRideInfos[] = new RideInfo[size];
+        int i = 0;
+        for (RideInfo r: rideInfos.values()) {
+            aRideInfos[i++] = new RideInfo(r);
+        }
+
+        return aRideInfos;
+    }
+
+    /**
+     * Returns the rideInfo record specified by rideId
+     * @return Returns the rideInfo record specified by rideId
+     */
+    public RideInfo getRideInfo(String rideId) {
+        return rideInfos.get(rideId);
+    }
+
+    /**
+     * Deletes the rideInfo record specified by rideId
+     * @param rideId specifies which RideInfo record to remove
+     */
+    public void deleteRideInfo(String rideId) {
+
+        if (rideInfos.containsKey(rideId)) {
+            RideInfo r = rideInfos.remove(rideId);
+            r.removeFromDisk();
+        }
     }
 
     /**
      *
-     * @param key
      */
-    public void deleteRideInfo(String key) {
+    public void deleteAll() {
 
-        if (rideInfos.containsKey(key)) {
-            RideInfo r = rideInfos.remove(key);
-            r.removeFromDisk();
+        String [] fileNames;
+        File f;
+
+        try {
+            if (null != (fileNames = (new File(rideInfoDirName)).list())) {
+                for(String fileName: fileNames) {
+                    f = new File(rideInfoDirName, fileName);
+                    f.delete();
+                }
+            }
+            rideInfos.clear();
+        }
+        catch(Exception ex) {
+            throw new RideInfoMgrException(ex);
         }
     }
 }
