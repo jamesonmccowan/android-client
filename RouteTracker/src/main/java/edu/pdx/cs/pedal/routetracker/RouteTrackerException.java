@@ -1,4 +1,4 @@
-package com.pedalportland.routetracker;
+package edu.pdx.cs.pedal.routetracker;
 
 /**
  * This class extends the <code>RuntimeException<code/> class, and implements
@@ -7,39 +7,39 @@ package com.pedalportland.routetracker;
  * @author robin5 (Robin Murray)
  * @version 1.0
  * @see <code>RuntimeException<code/> class.
- * created 3/1/14
+ * created 2/12/14
  */
 
-public class DataLayerException extends RuntimeException {
+public class RouteTrackerException extends RuntimeException {
 
     /**
-     * Constructs a new {@code DataLayerException} with the current stack
+     * Constructs a new {@code RouteTrackerException} with the current stack
      * trace and the specified detail message.
      */
-    public DataLayerException() {
+    public RouteTrackerException() {
         super();
     }
 
     /**
-     * Constructs a new {@code DataLayerException} with the current stack
+     * Constructs a new {@code RouteTrackerException} with the current stack
      * trace and the specified detail message.
      *
      * @param detailMessage
      *            the detail message for this exception.
      */
-    public DataLayerException(String detailMessage) {
+    public RouteTrackerException(String detailMessage) {
         super(detailMessage);
     }
 
     /**
-     * Constructs a new {@code DataLayerException} with the current stack trace
+     * Constructs a new {@code RouteTrackerException} with the current stack trace
      * and the specified cause.
      *
      * @param cause
      *            the optional cause of this exception, may be {@code null}.
      * @since 1.5
      */
-    public DataLayerException(Throwable cause) {
-        super(cause);
+    public RouteTrackerException(Throwable cause) {
+        super((cause == null ? null : cause.toString()), cause);
     }
 }

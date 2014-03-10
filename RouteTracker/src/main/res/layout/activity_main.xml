@@ -2,9 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.pedalportland.routetracker.MainActivity"
-
-    >
+    tools:context="edu.pdx.cs.pedal.routetracker.MainActivity">
 
     <ImageView
         android:layout_width="wrap_content"
@@ -14,7 +12,6 @@
         android:scaleType="matrix"
         android:tileMode="repeat"
         />
-
 
     <TextView android:id="@+id/fullscreen_content"
         android:layout_width="match_parent"
@@ -26,11 +23,13 @@
         android:gravity="center"
          />
 
+
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
     <FrameLayout android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
+
 
         <LinearLayout android:id="@+id/fullscreen_content_controls"
             style="?metaButtonBarStyle"
@@ -40,6 +39,7 @@
             android:background="@color/black_overlay"
             android:orientation="horizontal"
             tools:ignore="UselessParent">
+
 
             <ToggleButton android:id="@+id/trackingToggleButton"
                 android:layout_width="wrap_content"
@@ -55,6 +55,7 @@
 
 
                 />
+
 
 
 
@@ -80,8 +81,5 @@
 
     </FrameLayout>
 
-
-
-
-
 </FrameLayout>
+
