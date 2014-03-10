@@ -36,7 +36,8 @@ public class RideActivity extends Activity {
             ((TextView) findViewById(R.id.date)).setText(new DateTime(ride.getStartTime())
                     .toString("MM/dd/yyyy' at 'h:mma"));
 
-            ((TextView) findViewById(R.id.distance)).setText("Distance: " + ride.getDistanceMI());
+            ((TextView) findViewById(R.id.distance)).setText("Distance: "
+                    + twoDForm.format(ride.getDistanceMI()) + " Miles");
 
             long time = ride.getRideTime();
             ((TextView) findViewById(R.id.time)).setText("Time: " + (time / (1000 * 60 * 60))
