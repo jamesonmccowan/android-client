@@ -102,6 +102,7 @@ public class RideActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 0, 0, R.string.menu_track);
         menu.add(0, 1, 0, R.string.menu_rideList);
+        menu.add(0, 1, 0, "View");
         return true;
     }
 
