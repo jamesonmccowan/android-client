@@ -1,11 +1,17 @@
 package edu.pdx.cs.pedal.routetracker;
 
 import android.location.Location;
+import android.util.Log;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 import org.joda.time.DateTime;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 /**
  * This class collects route data and implements the calculation of total distance travelled
@@ -15,23 +21,33 @@ import org.json.simple.JSONObject;
  */
 public class RouteCalculator {
 
+    private static final String MODULE_TAG = "RouteCalculator";
     private static final String JSON_VERSION = "0.4";
-    private boolean isTracking;     // Whether app is currently tracking
-    private long startTime;         // Time (in milliseconds) when tracking starts
-    private long distanceTraveled;  // Distance traveled by user in meters
-    private double expiredTime;     // time the ride took (in hours)
+    private static final String JSON_FIELD_VERSION = "version";
+    private static final String JSON_FIELD_HASH = "hash";
+    private static final String JSON_FIELD_POINTS = "points";
+    private static final String JSON_FIELD_TIME = "time";
+    private static final String JSON_FIELD_LATITUDE = "latitude";
+    private static final String JSON_FIELD_LONGITUDE = "longitude";
+    private static final String JSON_FIELD_ACCURACY = "accuracy";
+
+    private boolean isTracking; // Whether app is currently tracking
+    private long startTime; // Time (in milliseconds) when tracking starts
+    private long rideTime; // Time (in milliseconds) when tracking starts
+    private long distanceTraveled; // Distance traveled by user in meters
 
     // Constants used in calculating total route distance and average speed
     private static final double MILLISECONDS_PER_HOUR = 1000 * 60 * 60;
     private static final double MILES_PER_KILOMETER = 0.621371192;
 
-    private List<Location> route = null;    // List of locations determining route
-    private Location previousLocation;      // previous reported location
+    private List<Location> route = null; // List of locations determining route
+    private Location previousLocation; // previous reported location
 
-    private double distanceKM;  // Total distance in kilometers
-    private double speedKM;     // Average speed in kilometers/Hour
-    private double distanceMI;  // Total distance in miles
-    private double speedMI;     // Average speed in miles/Hour
+    private double distanceKM; // Total distance in kilometers
+    private double speedKM; // Average speed in kilometers/Hour
+    private double distanceMI; // Total distance in miles
+    private double speedMI; // Average speed in miles/Hour
+    private double maxSpeedMPH; // Maximum speed in miles/Hour
 
     /**
      * Instantiates an instance of a <code>RouteCalculator</code>
@@ -44,17 +60,93 @@ public class RouteCalculator {
     /**
      * Instantiates an instance of a <code>RouteCalculator</code> from a file
      */
-    public RouteCalculator(String fileDirectory, String fileName) {
-
-        // Load JSON file here
+    public RouteCalculator(File file) {
+        route = new ArrayList<Location>();
+        this.reset();
+        loadFromDisk(file);
     }
 
     /**
-     *
+     * Load the ride information from the persisted file.
      */
-    public void loadFromDisk() {
+    public boolean loadFromDisk(File file) {
 
+        FileReader fr = null;
+        char buff[] = new char[512];
+        StringBuilder sb = new StringBuilder();
+        boolean loaded = false;
+
+        try {
+            fr = new FileReader(file);
+            int numBytes;
+
+            // Read and append data to buffer until EOF
+            while(-1 != (numBytes = fr.read(buff, 0, 512))) {
+                sb.append(buff, 0, numBytes);
+            }
+
+            // Parse JSON data
+            JSONObject jsonObject;
+            JSONParser parser = new JSONParser();
+            jsonObject = (JSONObject) parser.parse(sb.toString());
+
+            if (!(jsonObject.containsKey(JSON_FIELD_VERSION) &&
+                    jsonObject.containsKey(JSON_FIELD_POINTS) &&
+                    jsonObject.containsKey(JSON_FIELD_HASH))) {
+                return false;
+            }
+
+            String version = (String) jsonObject.get(JSON_FIELD_VERSION);
+            if (!version.equals(JSON_VERSION)) {
+                return false;
+            }
+
+            route.clear();
+            JSONArray points = (JSONArray)jsonObject.get(JSON_FIELD_POINTS);
+
+            int size = points.size();
+            double longitude;
+            double latitude;
+            DateTime dateTime;
+            Float accuracy;
+
+            for(int i = 0; i < size; ++i) {
+
+                JSONObject entry = (JSONObject) points.get(i);
+
+                dateTime = new DateTime(entry.get(JSON_FIELD_TIME));
+                latitude = ((Double) entry.get(JSON_FIELD_LATITUDE)).doubleValue();
+                longitude = ((Double) entry.get(JSON_FIELD_LONGITUDE)).doubleValue();
+                accuracy = (float)((Double) entry.get(JSON_FIELD_ACCURACY)).doubleValue();
+
+                Location location = new Location("");
+                location.setAccuracy(accuracy);
+                location.setLongitude(longitude);
+                location.setLatitude(latitude);
+
+                long millis = dateTime.getMillis();
+                location.setTime(millis);
+
+                route.add(location);
+            }
+            loaded = true;
+        }
+        catch(Exception ex) {
+            Log.d(MODULE_TAG, ex.getMessage());
+        }
+        finally {
+            // close the reader
+            try {
+                if (null != fr)
+                    fr.close();
+            }
+            catch(IOException ex) {
+                Log.e(MODULE_TAG, ex.getMessage());
+            }
+        }
+        return loaded;
     }
+
 
     /**
      * Resets route data calculations
@@ -65,12 +157,13 @@ public class RouteCalculator {
         previousLocation = null;
 
         startTime = 0;
+        rideTime = 0;
         distanceTraveled = 0;
         distanceKM = 0.0;
         speedKM = 0.0;
         distanceMI = 0.0;
         speedMI = 0.0;
-        expiredTime = 0;
+        maxSpeedMPH = 0.0;
     }
 
     /**
@@ -92,23 +185,32 @@ public class RouteCalculator {
         if (isTracking) {
             // compute the total time we were isTracking
             long currentTime = System.currentTimeMillis();
-            expiredTime = ((double)currentTime - (double)startTime) / MILLISECONDS_PER_HOUR;
-            assert(expiredTime >= 0.0);
+            rideTime = currentTime - startTime;
+            double expiredTimeHrs = ((double)currentTime - (double)startTime) / MILLISECONDS_PER_HOUR;
+            assert(expiredTimeHrs >= 0.0);
 
             isTracking = false;
             distanceKM = distanceTraveled / 1000.0;
-            speedKM = distanceKM / expiredTime;
+            speedKM = distanceKM / expiredTimeHrs;
             distanceMI = distanceKM * MILES_PER_KILOMETER;
-            speedMI = distanceMI / expiredTime;
+            speedMI = distanceMI / expiredTimeHrs;
         }
     }
 
     /**
-     *
-     * @return
+     * Returns the start time of the ride
+     * @return the start time of the ride
      */
     public long getStartTime() {
         return startTime;
+    }
+
+    /**
+     * Returns the ride time of the ride
+     * @return the ride time of the ride
+     */
+    public long getRideTime() {
+        return rideTime;
     }
 
     /**
@@ -144,11 +246,11 @@ public class RouteCalculator {
     }
 
     /**
-     * Returns time riding in hours.
+     * Returns average speed in miles/hr.
      */
-    public double getExpiredTime() {
+    public double getMaxSpeedMI() {
         assert(!isTracking);
-        return expiredTime;
+        return maxSpeedMPH;
     }
 
     /**
@@ -158,13 +260,47 @@ public class RouteCalculator {
 
         assert(isTracking);
         if (isTracking) {
+
+            // add to the total distanceTraveled
             if (previousLocation != null) {
-                // add to the total distanceTraveled
                 distanceTraveled += location.distanceTo(previousLocation);
             }
+
+            // If speed was calculated for location, update maximum speed if appropriate
+            if (location.hasSpeed()) {
+                double speedMPH = location.getSpeed() * 2.236936292;
+                if (speedMPH > maxSpeedMPH) {
+                    maxSpeedMPH = speedMPH;
+                }
+            }
+
+            // Add the location to the ride
             route.add(location);
             previousLocation = location;
         }
+    }
+
+    /**
+     * Calculates the speed in miles/hr. given a distance change in meters, and time in milliseconds
+     * @param d distance travelled inmeters
+     * @param t0 initial tick of the clock in milliseconds
+     * @param t1 final tick of the clock in milliseconds
+     * @return speed in Miles/Hr.
+     */
+    private double calcSpeedMPH(double d, double t0, double t1) {
+
+        double cf = 2236.936292; // (1 mi/1609.344 meters) * (3,600,000 ms/hr) = (mi*ms)/(meters*hr)
+        return (t1 == t0) ? 0 : (d * 2236.936292) / (t1 - t0);
+    }
+
+    /**
+     * Calculates the speed in miles/hr. from the location getSpeed() field returned by the location
+     * @param location the location field
+     * @return
+     */
+    private double calcSpeedMPH2(Location location) {
+
+        return location.getSpeed() * 2.236936292;
     }
 
     /**
@@ -175,9 +311,9 @@ public class RouteCalculator {
     }
 
     /**
-     *
-     * @param locations
-     * @return
+     * Translates the ride data into JSON
+     * @param locations the list of ride locations
+     * @return the JSON string
      */
     public static String toJSON(List<Location> locations) {
         JSONArray points = new JSONArray();

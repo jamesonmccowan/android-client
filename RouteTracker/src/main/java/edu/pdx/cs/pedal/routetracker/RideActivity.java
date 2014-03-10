@@ -8,17 +8,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
+import org.joda.time.DateTime;
 import java.text.DecimalFormat;
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import edu.pdx.cs.pedal.routetracker.R;
 
 public class RideActivity extends Activity {
+    MyApplication myApp;
     RideInfo ride;
+    String rideId;
     /**
      * Called when the activity is first created.
      */
@@ -28,35 +24,42 @@ public class RideActivity extends Activity {
         setContentView(R.layout.activity_ride);
         Button delete = (Button) findViewById(R.id.delete);
         Intent i = getIntent();
-        MyApplication myApp;
 
+        rideId = i.getStringExtra("rideId");
         if (null != (myApp = MyApplication.getInstance())) {
-            ride = myApp.getDataLayer().getRideInfos().get(i.getIntExtra("index", 0));
-        } else {
-            ride = null;
-        }
+            ride = MyApplication.getInstance().getDataLayer().getRideInfo(rideId);
 
-        DecimalFormat oneDForm = new DecimalFormat("#.#");
-        DecimalFormat twoDForm = new DecimalFormat("#.##");
-        Format formatter = new SimpleDateFormat( ":mm:ss" );
+            DecimalFormat oneDForm = new DecimalFormat("#.#");
+            DecimalFormat twoDForm = new DecimalFormat("#.##");
 
-        if (ride.getDate() != null) {
-            ((TextView) findViewById(R.id.date)).setText(ride.getDate().toString("MM/dd/yyyy' at 'h:mma"));
+            ((TextView) findViewById(R.id.date)).setText(new DateTime(ride.getStartTime())
+                    .toString("MM/dd/yyyy' at 'h:mma"));
+
+            ((TextView) findViewById(R.id.distance)).setText("Distance: " + ride.getDistanceMI());
+
+            long time = ride.getRideTime();
+            ((TextView) findViewById(R.id.time)).setText("Time: " + (time / (1000 * 60 * 60))
+                    + (new DateTime(time)).toString(":mm:ss"));
+
+            ((TextView) findViewById(R.id.avSpeed)).setText("Average Speed: "
+                    + twoDForm.format(ride.getAvgSpeedMPH()) +" MPH");
+
+            ((TextView) findViewById(R.id.mxSpeed)).setText("Max Speed: "
+                    + twoDForm.format(ride.getMaxSpeedMPH()) +" MPH");
+
+            ((TextView) findViewById(R.id.food)).setText("Donuts burned off: "
+                    + oneDForm.format((time / (1000 * 60 * 60)) / 224));
+
         } else {
-            ((TextView) findViewById(R.id.date)).setText("Date Unknown");
+            ((TextView) findViewById(R.id.date)).setText("Error, was unable to display Ride");
         }
-        ((TextView) findViewById(R.id.distance)).setText("Distance: " + ride.getDistanceMI());
-        double time = ride.getTime();
-        ((TextView) findViewById(R.id.time)    ).setText("Time: " + ((long) time) + formatter.format(new Date((long) (time * 1000 * 60 * 60))));
-        ((TextView) findViewById(R.id.avSpeed) ).setText("Average Speed: " + twoDForm.format(ride.getSpeedMI()) +" MPH");
-        ((TextView) findViewById(R.id.food)    ).setText("Donuts burned off: " + oneDForm.format((time * 654) / 224));
 
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ride != null)
-                    ride.removeFromDisk();
-                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                if (myApp != null)
+                    MyApplication.getInstance().getDataLayer().deleteRide(rideId);
+                Intent i = new Intent(getApplicationContext(), RideListActivity.class);
                 startActivity(i);
             }
         });

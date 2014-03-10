@@ -4,19 +4,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
 import android.util.Log;
-
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 /**
  * A {@code UploadTask} is a concurrent unit of execution. It has its own call stack
@@ -38,7 +32,6 @@ import org.json.simple.parser.ParseException;
 public class UploadTask extends Thread {
 
     private static final String MODULE_TAG = "UploadTask";
-    private static final String JSON_FIELD_RIDE_URL = "RideURL";
     private static final int MAX_URL_RESPONSE_LENGTH = 1024;
     private static final int MAX_ERROR_RESPONSE_LENGTH = 2048;
 
@@ -179,12 +172,19 @@ public class UploadTask extends Thread {
                 try {
                     // Retrieve the response from the web site
                     String response;
-                    String rideURL;
+                    UrlInfo urlInfo;
 
                     inputStream = connection.getInputStream();
-                    if (null != (response = getResponse(inputStream, MAX_URL_RESPONSE_LENGTH)))
-                        if (null != (rideURL = getRideURL(response)))
-                            saveRideURL(rideURL, fileName);
+                    if (null != (response = getResponse(inputStream, MAX_URL_RESPONSE_LENGTH))) {
+                        try {
+                            if (null != (urlInfo = new UrlInfo(responseDirName, fileName, response))) {
+                                urlInfo.saveToDisk();
+                            }
+                        }
+                        catch(Exception ex) {
+                            Log.d(MODULE_TAG, ex.getMessage());
+                        }
+                    }
                 }
                 catch(IOException ex) {
                     Log.d(MODULE_TAG, ex.getMessage());
@@ -261,66 +261,6 @@ public class UploadTask extends Thread {
             }
         }
         return response;
-    }
-
-    /**
-     * Parses JSON data to extract ride URL
-     * @param apiResponse the response returned by the PedalPDX API
-     * @return the ride URL
-     */
-    private String getRideURL(String apiResponse) {
-
-        String rideURL = null;
-
-        try {
-            // Parse JSON data
-            JSONObject jsonObject;
-            JSONParser parser = new JSONParser();
-            jsonObject = (JSONObject) parser.parse(apiResponse);
-
-            // Validate presence of JSON fields
-            if (jsonObject.containsKey(JSON_FIELD_RIDE_URL)) {
-                rideURL = (String) jsonObject.get(JSON_FIELD_RIDE_URL);
-            }
-        }
-        catch(ParseException ex) {
-            Log.d(MODULE_TAG, ex.getMessage());
-        }
-        return rideURL;
-    }
-
-    /**
-     * Writes 'result' to the file specified by fileName
-     * @param rideURL Write the result returned from the URL to a file on disk
-     * @param fileName File to write the response to
-     */
-    private void saveRideURL(String rideURL, String fileName) {
-
-        File file;
-        FileWriter fw = null;
-
-        // Find the file
-        try {
-            if (null != (file = new File(responseDirName, fileName))) {
-                if (null != (fw = new FileWriter(file))) {
-                    fw.write(rideURL);
-                }
-            }
-        }
-        catch (java.io.IOException ex) {
-            Log.d(MODULE_TAG, ex.getMessage());
-        }
-        finally {
-            // close the reader
-            try {
-                if (fw != null)
-                    fw.close();
-            }
-            catch(IOException ex) {
-                Log.d(MODULE_TAG, ex.getMessage());
-            }
-        }
-
     }
 
     /**

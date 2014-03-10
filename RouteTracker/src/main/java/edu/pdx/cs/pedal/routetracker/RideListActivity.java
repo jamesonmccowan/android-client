@@ -9,19 +9,16 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import edu.pdx.cs.pedal.routetracker.R;
-
+import org.joda.time.DateTime;
 import java.text.DecimalFormat;
-import java.text.Format;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import static java.lang.Math.round;
-
 public class RideListActivity extends Activity {
+    MyApplication myApp = null;
+    RideInfo[] rides = null;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,9 +30,6 @@ public class RideListActivity extends Activity {
         String[] from = new String[] {"date", "distance", "time", "food"};
         int[] to = new int[] { R.id.date, R.id.distance, R.id.time, R.id.food };
 
-        MyApplication myApp = null;
-        List<RideInfo> rides = null;
-
         if (null != (myApp = MyApplication.getInstance())) {
             rides = myApp.getDataLayer().getRideInfos();
         }
@@ -45,20 +39,15 @@ public class RideListActivity extends Activity {
         if (rides != null) {
             DecimalFormat oneDForm = new DecimalFormat("#.#");
             DecimalFormat twoDForm = new DecimalFormat("#.##");
-            Format formatter = new SimpleDateFormat( ":mm:ss" );
-            double time;
+            long time;
 
-            for(int i = 0; i < rides.size(); i++){
+            for (RideInfo ride : rides) {
                 HashMap<String, String> map = new HashMap<String, String>();
-                if (rides.get(i).getDate() != null) {
-                    map.put("date", rides.get(i).getDate().toString("MM/dd/yyyy' @ 'h:mma"));
-                } else {
-                    map.put("date", "Date Unknown");
-                }
-                map.put("distance", twoDForm.format(rides.get(i).getDistanceMI()) + " Miles");
-                time = rides.get(i).getTime();
-                map.put("time", "" + ((long) time) + formatter.format(new Date((long) (time * 1000 * 60 * 60))));
-                map.put("food", " x " + oneDForm.format((time * 654) / 224)); //calories per hour ~= 654, donut 224 Cal
+                map.put("date", (new DateTime(ride.getStartTime()).toString("MM/dd/yyyy' @ 'h:mma")));
+                map.put("distance", twoDForm.format(ride.getDistanceMI()) + " Miles");
+                time = ride.getRideTime();
+                map.put("time", (time / (1000 * 60 * 60)) + (new DateTime(time)).toString(":mm:ss"));
+                map.put("food", " x " + oneDForm.format((time / (1000 * 60 * 60)) / 224)); //calories per hour ~= 654, donut 224 Cal
                 fillMaps.add(map);
             }
 
@@ -70,9 +59,11 @@ public class RideListActivity extends Activity {
                 public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                     // position is like array index
                     // Start your Activity according to the item just clicked.
-                    Intent i = new Intent(getApplicationContext(), RideActivity.class);
-                    i.putExtra("index", position);
-                    startActivity(i);
+                    if (myApp != null && rides != null) {
+                        Intent i = new Intent(getApplicationContext(), RideActivity.class);
+                        i.putExtra("rideId", rides[position].getRideId());
+                        startActivity(i);
+                    }
                 }
             });
         }
