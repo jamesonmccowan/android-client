@@ -84,7 +84,6 @@ public class MainActivity extends Activity {
         mSystemUiHider = SystemUiHider.getInstance(this, contentView, HIDER_FLAGS);
         mSystemUiHider.setup();
         mSystemUiHider.setOnVisibilityChangeListener(new View_OnVisibilityChangeListener(controlsView));
-        Button maps = (Button) findViewById(R.id.maps);
 
         // Set up the user interaction to manually show or hide the system UI.
         contentView.setOnClickListener(new ContentView_ViewOnClickListener());

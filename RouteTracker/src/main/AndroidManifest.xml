@@ -63,17 +63,6 @@
             android:name=".UploadService"
             android:permission="edu.pdx.cs.pedal.routetracker"/>
 
-        <activity android:name=".Maps"></activity>
-
-
-        <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="Your_API_Key" />
-
-
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
     </application>
 
 
