@@ -50,7 +50,7 @@ public class RideActivity extends Activity {
                     + twoDForm.format(ride.getMaxSpeedMPH()) +" MPH");
 
             ((TextView) findViewById(R.id.food)).setText("Donuts burned off: "
-                    + oneDForm.format((time / (1000 * 60 * 60)) *(654/224)));
+                    + twoDForm.format((((float) time) / (1000 * 60 * 60)) * (654/224)));
 
         } else {
             ((TextView) findViewById(R.id.date)).setText("Error, was unable to display Ride");

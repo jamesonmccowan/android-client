@@ -48,7 +48,7 @@ public class RideListActivity extends Activity {
                 map.put("distance", twoDForm.format(ride.getDistanceMI()) + " Miles");
                 time = ride.getRideTime();
                 map.put("time", (time / (1000 * 60 * 60)) + (new DateTime(time)).toString(":mm:ss"));
-                map.put("food", " x " + oneDForm.format((time / (1000 * 60 * 60)) *(654/224))); //calories per hour ~= 654, donut 224 Cal
+                map.put("food", " x " + oneDForm.format((((float) time) / (1000 * 60 * 60)) * (654/224))); //calories per hour ~= 654, donut 224 Cal
                 fillMaps.add(map);
             }
 
