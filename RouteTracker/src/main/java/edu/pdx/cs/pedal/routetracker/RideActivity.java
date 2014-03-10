@@ -1,6 +1,8 @@
 package edu.pdx.cs.pedal.routetracker;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -22,7 +24,6 @@ public class RideActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ride);
-        Button delete = (Button) findViewById(R.id.delete);
         Intent i = getIntent();
 
         rideId = i.getStringExtra("rideId");
@@ -54,13 +55,44 @@ public class RideActivity extends Activity {
             ((TextView) findViewById(R.id.date)).setText("Error, was unable to display Ride");
         }
 
+
+        Button delete = (Button) findViewById(R.id.delete);
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (myApp != null)
-                    MyApplication.getInstance().getDataLayer().deleteRide(rideId);
-                Intent i = new Intent(getApplicationContext(), RideListActivity.class);
-                startActivity(i);
+                new AlertDialog.Builder(v.getContext())
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Delete")
+                        .setMessage("Are you sure you want to delete this ride?")
+                        .setNegativeButton("No", null)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (myApp != null)
+                                    MyApplication.getInstance().getDataLayer().deleteRide(rideId);
+                                Intent i = new Intent(getApplicationContext(), RideListActivity.class);
+                                startActivity(i);
+                            }
+
+                        })
+                        .show();
+            }
+        });
+
+
+        Button maps = (Button) findViewById(R.id.maps);
+        if (ride.getDistanceMI() != 0){
+            maps.setVisibility(View.VISIBLE);
+        } else {
+            maps.setVisibility(View.GONE);
+        }
+
+        maps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), Maps.class);
+                intent.putExtra("rideId", rideId);
+                startActivityForResult(intent, 0);
             }
         });
     }

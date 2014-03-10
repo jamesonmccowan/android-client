@@ -80,7 +80,6 @@ public class MainActivity extends Activity {
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.fullscreen_content);
-        Button maps = (Button) findViewById(R.id.maps);
 
         // Set up an instance of SystemUiHider to control the system UI for this activity
         mSystemUiHider = SystemUiHider.getInstance(this, contentView, HIDER_FLAGS);
@@ -112,14 +111,6 @@ public class MainActivity extends Activity {
 
         // register listener for trackingToggleButton
         trackingToggleButton.setOnCheckedChangeListener(trackingToggleButtonListener);
-
-        maps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), Maps.class);
-                startActivityForResult(intent, 0);
-            }
-        });
     }
 
     // listener for trackingToggleButton's events
