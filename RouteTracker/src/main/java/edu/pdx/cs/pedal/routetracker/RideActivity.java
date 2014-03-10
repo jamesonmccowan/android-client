@@ -102,7 +102,9 @@ public class RideActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 0, 0, R.string.menu_track);
         menu.add(0, 1, 0, R.string.menu_rideList);
-        menu.add(0, 1, 0, "View");
+        if (ride.getDistanceMI() != 0){
+            menu.add(0, 2, 0, "View Map");
+        }
         return true;
     }
 
@@ -118,6 +120,10 @@ public class RideActivity extends Activity {
                 i = new Intent(getApplicationContext(), RideListActivity.class);
                 startActivity(i);
                 return true;
+            case 2:
+                i = new Intent(getApplicationContext(), Maps.class);
+                i.putExtra("rideId", rideId);
+                startActivityForResult(i, 0);
         }
         return false;
     }

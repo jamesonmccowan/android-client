@@ -41,7 +41,8 @@ public class RideListActivity extends Activity {
             DecimalFormat twoDForm = new DecimalFormat("#.##");
             long time;
 
-            for (RideInfo ride : rides) {
+            for (int i = rides.length-1; i >= 0; i--) {
+                RideInfo ride = rides[i];
                 HashMap<String, String> map = new HashMap<String, String>();
                 map.put("date", (new DateTime(ride.getStartTime()).toString("MM/dd/yyyy' @ 'h:mma")));
                 map.put("distance", twoDForm.format(ride.getDistanceMI()) + " Miles");
