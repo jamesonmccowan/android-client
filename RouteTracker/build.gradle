@@ -22,5 +22,5 @@ dependencies {
     compile 'com.googlecode.json-simple:json-simple:1.1'
     compile "joda-time:joda-time:2.3"
     compile 'junit:junit:4.10@jar'
-    compile 'com.google.android.gms:play-services:4.0.30'
+    compile 'com.google.android.gms:play-services:4.2.42'
 }

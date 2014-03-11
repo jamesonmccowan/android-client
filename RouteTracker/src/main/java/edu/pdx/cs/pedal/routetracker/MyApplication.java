@@ -47,10 +47,10 @@ public class MyApplication extends Application {
     public final void onCreate() {
         super.onCreate();
 
-        LocationManager locationManager = null;
-        PowerManager powerManager = null;
-        NotificationManager notificationManager = null;
-        Notification.Builder builder = null;
+        LocationManager locationManager;
+        PowerManager powerManager;
+        NotificationManager notificationManager;
+        Notification.Builder builder;
 
         myApp = this;
 
@@ -109,10 +109,6 @@ public class MyApplication extends Application {
         // Create a RouteTracker object and maintain a reference to it
         try {
             routeTracker = new RouteTracker(locationManager, powerManager, notificationManager, builder);
-            if (null == routeTracker) {
-                setInitErrorMessage(getResources().getString(R.string.ex_error_out_of_memory));
-                return;
-            }
         }
         catch(Exception ex) {
             setInitErrorMessage(ex.getMessage());
@@ -174,9 +170,10 @@ public class MyApplication extends Application {
             setInitErrorMessage(getResources().getString(R.string.rim_error_directories));
         }
 
+        String uploadRootDir = null;
         // Connect DataLayer and rideUploader service
         try {
-            String uploadRootDir = getFilesDir().getAbsolutePath() + UPLOAD_ROOT_DIR;
+            uploadRootDir = getFilesDir().getAbsolutePath() + UPLOAD_ROOT_DIR;
             String ridesDirName = dataLayer.getRidesDirName();
             Intent intent = new Intent(this, UploadService.class);
             intent.putExtra(UploadService.EXTRA_RIDES_DIR_NAME, ridesDirName);
@@ -191,6 +188,10 @@ public class MyApplication extends Application {
         catch(SecurityException ex) {
             setInitErrorMessage(getResources().getString(R.string.dl_security_exception));
         }
+
+        // Some final initialization has to happen within the DataLayer
+        dataLayer.Init(uploadRootDir);
+        //dataLayer.deleteAll();
     }
 
     /**
