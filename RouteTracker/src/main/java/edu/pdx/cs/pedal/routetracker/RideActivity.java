@@ -121,7 +121,7 @@ public class RideActivity extends Activity {
                 startActivity(i);
                 return true;
             case 2:
-                i = new Intent(getApplicationContext(), Maps.class);
+                i = new Intent(getApplicationContext(), Maps_Clipping.class);
                 i.putExtra("rideId", rideId);
                 startActivityForResult(i, 0);
         }

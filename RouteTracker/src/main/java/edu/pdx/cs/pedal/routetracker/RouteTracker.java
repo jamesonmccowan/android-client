@@ -277,5 +277,9 @@ public class RouteTracker {
             Log.e(MODULE_TAG, ex.getMessage());
         }
     }
+    public void setStartpoint (double StartPoint){route.setStartpoint(StartPoint);}
+
+    public void setEndpoint (double EndPoint) {route.setEndpoint(EndPoint);}
+
 }
 

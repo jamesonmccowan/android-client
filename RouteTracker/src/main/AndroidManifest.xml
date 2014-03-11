@@ -52,6 +52,7 @@
         <activity android:name=".RideListActivity"></activity>
         <activity android:name=".RideActivity"></activity>
         <activity android:name=".Maps"></activity>
+        <activity android:name=".Maps_Clipping"></activity>
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"

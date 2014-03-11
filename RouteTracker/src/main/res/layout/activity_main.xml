@@ -41,6 +41,15 @@
                 android:layout_gravity="bottom|right"
                 android:layout_weight="1"/>
         </LinearLayout>
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="clipping"
+            android:id="@+id/maps_clipping"
+            android:layout_gravity="right|top" />
+
     </FrameLayout>
 
 </FrameLayout>

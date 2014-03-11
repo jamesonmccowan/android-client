@@ -5,16 +5,21 @@ import edu.pdx.cs.pedal.routetracker.util.SystemUiHider;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.util.Log;
 
@@ -85,6 +90,7 @@ public class MainActivity extends Activity {
         mSystemUiHider = SystemUiHider.getInstance(this, contentView, HIDER_FLAGS);
         mSystemUiHider.setup();
         mSystemUiHider.setOnVisibilityChangeListener(new View_OnVisibilityChangeListener(controlsView));
+        Button clipping = (Button) findViewById(R.id.maps_clipping);
 
         // Set up the user interaction to manually show or hide the system UI.
         contentView.setOnClickListener(new ContentView_ViewOnClickListener());
@@ -111,6 +117,77 @@ public class MainActivity extends Activity {
 
         // register listener for trackingToggleButton
         trackingToggleButton.setOnCheckedChangeListener(trackingToggleButtonListener);
+
+        clipping.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View arg0) {
+                // get prompts.xml view
+                LayoutInflater li = LayoutInflater.from(arg0.getContext());
+                View clipping_view = li.inflate(R.layout.activity_clipping, null);
+
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        arg0.getContext());
+
+
+                alertDialogBuilder.setView(clipping_view);
+
+
+                final EditText userInput_start_clipping = (EditText) clipping_view
+                        .findViewById(R.id.start_clipping);
+                userInput_start_clipping.setRawInputType(Configuration.KEYBOARD_12KEY);
+
+                final EditText userInput_end_clipping = (EditText) clipping_view
+                        .findViewById(R.id.end_clipping);
+                userInput_end_clipping.setRawInputType(Configuration.KEYBOARD_12KEY);
+
+
+                // set dialog message
+                alertDialogBuilder
+                        .setCancelable(false)
+                        .setPositiveButton("OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        // get user input and set it to result
+                                        // edit text
+                                        final String start_clipping =
+                                                userInput_start_clipping.getText().toString();
+                                        final String end_clipping =
+                                                userInput_end_clipping.getText().toString();
+
+                                        if (start_clipping.matches("")) {
+                                            Toast.makeText(arg0.getContext(),
+                                                    "You didn't input the clipping",
+                                                    Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
+                                        if (end_clipping.matches("")){
+                                            Toast.makeText(arg0.getContext(),
+                                                    "You didn't input the clipping",
+                                                    Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
+                                        routeTracker.setStartpoint(Double.parseDouble(start_clipping));
+                                        routeTracker.setEndpoint(Double.parseDouble(end_clipping));
+                                    }
+                                })
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+
+                // create alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+
+                // show it
+                alertDialog.show();
+            }
+        });
+
     }
 
     // listener for trackingToggleButton's events
@@ -460,6 +537,7 @@ public class MainActivity extends Activity {
     /* Creates the menu items */
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, 0, 0, R.string.menu_rideList);
+        menu.add(0, 1, 0, "Maps");
         return true;
     }
 
@@ -469,6 +547,10 @@ public class MainActivity extends Activity {
             case 0:
                 Intent i = new Intent(getApplicationContext(), RideListActivity.class);
                 startActivity(i);
+                return true;
+            case 1:
+                Intent k = new Intent(getApplicationContext(), Maps.class);
+                startActivity(k);
                 return true;
         }
         return false;
