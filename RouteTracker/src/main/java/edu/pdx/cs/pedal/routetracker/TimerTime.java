@@ -37,7 +37,7 @@ public class TimerTime extends Activity {
                 int minutes = (int) (timeElapsed - hours * 3600000) / 60000;
                 int seconds = (int) (timeElapsed - hours * 3600000 - minutes * 60000) / 1000;
 
-                times.setText(hours+":"+minutes+":"+seconds);
+                times.setText(hours+"h "+minutes+"m "+seconds+"s ");
 
             }
         });
