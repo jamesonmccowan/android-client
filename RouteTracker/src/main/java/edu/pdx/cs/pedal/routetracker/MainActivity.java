@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
-
 import edu.pdx.cs.pedal.routetracker.util.SystemUiHider;
 
 /**
@@ -29,13 +28,11 @@ import edu.pdx.cs.pedal.routetracker.util.SystemUiHider;
  * created 1/3/14
  */
 public class MainActivity extends Activity {
-
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
      */
     private static final boolean AUTO_HIDE = true;
-
 
     /**
      * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
@@ -77,14 +74,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
         setContentView(R.layout.activity_main);
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.fullscreen_content);
-        Button maps = (Button) findViewById(R.id.maps);
 
         // Set up an instance of SystemUiHider to control the system UI for this activity
         mSystemUiHider = SystemUiHider.getInstance(this, contentView, HIDER_FLAGS);
@@ -117,36 +110,7 @@ public class MainActivity extends Activity {
         // register listener for trackingToggleButton
         trackingToggleButton.setOnCheckedChangeListener(trackingToggleButtonListener);
 
-        Button button;
-
-
         mChronometer = (Chronometer) findViewById(R.id.chronometer);
-        mChronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-            public void onChronometerTick(Chronometer times) {
-                long timeElapsed = SystemClock.elapsedRealtime() - times.getBase();
-                //long to=(1000*60*60*6)-t;
-
-                int hours = (int) (timeElapsed / 3600000);
-                int minutes = (int) (timeElapsed - hours * 3600000) / 60000;
-                int seconds = (int) (timeElapsed - hours * 3600000 - minutes * 60000) / 1000;
-               // int millis = (int) timeElapsed % 9;
-
-                times.setText("TIME "+hours+":"+minutes+":"+seconds);
-
-            }
-        });
-
-        // Watch for button clicks.
-
-        button = (Button) findViewById(R.id.trackingToggleButton);
-
-         // button.setOnClickListener(mStartListener);
-
-        //button = (Button) findViewById(R.id.stop);
-        // button.setOnClickListener(mStopListener);
-
-        // button = (Button) findViewById(R.id.reset);
-        // button.setOnClickListener(mResetListener);
     }
 
     // listener for trackingToggleButton's events
@@ -386,12 +350,8 @@ public class MainActivity extends Activity {
                 }
                 else {
                     if (isChecked) {
-
-
                         mChronometer.start();
-
                         mChronometer.setBase(SystemClock.elapsedRealtime());
-
 
                         try {
                             // Start the route tracking
@@ -403,10 +363,7 @@ public class MainActivity extends Activity {
                         }
                     }
                     else {
-
                         mChronometer.stop();
-
-
 
                         try {
                             // Stop the route tracking
@@ -505,8 +462,4 @@ public class MainActivity extends Activity {
             mSystemUiHider.hide();
         }
     }
-
-
-
-
 }
