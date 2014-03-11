@@ -2,12 +2,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0099cc"
     tools:context="edu.pdx.cs.pedal.routetracker.MainActivity">
 
-    <!-- The primary full-screen view. This can be replaced with whatever view
-         is needed to present your content, e.g. VideoView, SurfaceView,
-         TextureView, etc. -->
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/bg"
+        android:scaleType="matrix"
+        android:tileMode="repeat"/>
+
     <TextView android:id="@+id/fullscreen_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -15,8 +18,7 @@
         android:textColor="#33b5e5"
         android:textStyle="bold"
         android:textSize="50sp"
-        android:gravity="center"
-        android:text="@string/dummy_content" />
+        android:gravity="center"/>
 
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
@@ -39,9 +41,26 @@
                 android:textOn="@string/button_stop_tracking"
                 android:textOff="@string/button_start_tracking"
                 android:layout_gravity="bottom|right"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:background="@drawable/track"
+                android:textSize="38sp"/>
+        </LinearLayout>
+
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:padding="4dip"
+            android:gravity="center_horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <Chronometer android:id="@+id/chronometer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:paddingBottom="30dip"
+                android:paddingTop="260dip"
+                android:textSize="50sp"/>
+
         </LinearLayout>
     </FrameLayout>
-
 </FrameLayout>
 

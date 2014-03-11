@@ -2,8 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="edu.pdx.cs.pedal.routetracker"
     android:versionCode="1"
-    android:versionName="1.0" >
-
+    android:versionName="1.0">
 
     <uses-sdk
         android:minSdkVersion="16"
@@ -13,11 +12,9 @@
         android:name="edu.pdx.cs.pedal.routetracker.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
 
-
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
-
 
     <uses-permission android:name="edu.pdx.cs.pedal.routetracker.permission.MAPS_RECEIVE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
@@ -28,16 +25,16 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
-
     <application
         android:allowBackup="true"
-        android:icon="@drawable/pedalpdx"
+        android:icon="@drawable/bike"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         android:name="edu.pdx.cs.pedal.routetracker.MyApplication" >
         <activity
             android:launchMode="singleTop"
             android:name="edu.pdx.cs.pedal.routetracker.MainActivity"
+            android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:theme="@style/FullscreenTheme" >
@@ -66,6 +63,4 @@
             android:permission="edu.pdx.cs.pedal.routetracker"/>
 
     </application>
-
-
 </manifest>
