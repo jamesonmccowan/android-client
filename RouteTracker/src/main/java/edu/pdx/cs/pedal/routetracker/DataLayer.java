@@ -49,7 +49,7 @@ public class DataLayer {
         }
 
         /**
-         * Called when a connection to the Service has been lost.  This typically
+         * Called when a connection to the Service has been lost. This typically
          * happens when the process hosting the service has crashed or been killed.
          * This does <em>not</em> remove the ServiceConnection itself -- this
          * binding to the service will remain active, and you will receive a call
@@ -80,7 +80,7 @@ public class DataLayer {
     }
 
     /**
-     * This function initializes the directory values used by the DataLayer.  Note that the
+     * This function initializes the directory values used by the DataLayer. Note that the
      * Uploader service must have been initialized before this function is called.
      * @param uploadRootDir The root directory for the UploadService
      */
@@ -101,7 +101,7 @@ public class DataLayer {
 
     /**
      * Stores a Ride to disk, creates a Ride Info file, then schedules it be uploaded
-     * @param ride  The ride object to be stored.
+     * @param ride The ride object to be stored.
      */
     public void putRide(RouteCalculator ride) {
 

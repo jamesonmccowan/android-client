@@ -31,23 +31,23 @@ public class RouteCalculator {
     private static final String JSON_FIELD_LONGITUDE = "longitude";
     private static final String JSON_FIELD_ACCURACY = "accuracy";
 
-    private boolean isTracking;     // Whether app is currently tracking
-    private long startTime;         // Time (in milliseconds) when tracking starts
-    private long rideTime;         // Time (in milliseconds) when tracking starts
-    private long distanceTraveled;  // Distance traveled by user in meters
+    private boolean isTracking; // Whether app is currently tracking
+    private long startTime; // Time (in milliseconds) when tracking starts
+    private long rideTime; // Time (in milliseconds) when tracking starts
+    private long distanceTraveled; // Distance traveled by user in meters
 
     // Constants used in calculating total route distance and average speed
     private static final double MILLISECONDS_PER_HOUR = 1000 * 60 * 60;
     private static final double MILES_PER_KILOMETER = 0.621371192;
 
-    private List<Location> route = null;    // List of locations determining route
-    private Location previousLocation;      // previous reported location
+    private List<Location> route = null; // List of locations determining route
+    private Location previousLocation; // previous reported location
 
-    private double distanceKM;  // Total distance in kilometers
-    private double speedKM;     // Average speed in kilometers/Hour
-    private double distanceMI;  // Total distance in miles
-    private double speedMI;     // Average speed in miles/Hour
-    private double maxSpeedMPH;  // Maximum speed in miles/Hour
+    private double distanceKM; // Total distance in kilometers
+    private double speedKM; // Average speed in kilometers/Hour
+    private double distanceMI; // Total distance in miles
+    private double speedMI; // Average speed in miles/Hour
+    private double maxSpeedMPH; // Maximum speed in miles/Hour
     private static ArrayList<LatLng> trip = new ArrayList<LatLng>();
 
     /**
@@ -289,7 +289,7 @@ public class RouteCalculator {
      */
     private double calcSpeedMPH(double d, double t0, double t1) {
 
-        double cf = 2236.936292;   // (1 mi/1609.344 meters) * (3,600,000 ms/hr) = (mi*ms)/(meters*hr)
+        double cf = 2236.936292; // (1 mi/1609.344 meters) * (3,600,000 ms/hr) = (mi*ms)/(meters*hr)
         return (t1 == t0) ? 0 : (d * 2236.936292) / (t1 - t0);
     }
 

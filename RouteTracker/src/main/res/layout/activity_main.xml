@@ -20,13 +20,11 @@
         android:textSize="50sp"
         android:gravity="center"/>
 
-
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
     <FrameLayout android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
-
 
         <LinearLayout android:id="@+id/fullscreen_content_controls"
             style="?metaButtonBarStyle"
@@ -36,7 +34,6 @@
             android:background="@color/black_overlay"
             android:orientation="horizontal"
             tools:ignore="UselessParent">
-
 
             <ToggleButton android:id="@+id/trackingToggleButton"
                 android:layout_width="wrap_content"
@@ -65,6 +62,5 @@
 
         </LinearLayout>
     </FrameLayout>
-
 </FrameLayout>
 

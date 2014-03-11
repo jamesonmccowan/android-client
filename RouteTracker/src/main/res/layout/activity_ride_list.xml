@@ -1,0 +1,19 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000"
+    tools:context="edu.pdx.cs.pedal.routetracker.RideListActivity">
+
+    <!-- List Divider -->
+    <View android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:background="?android:attr/listDivider" />
+
+    <ListView android:id="@+id/listview"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:background="#999999">
+    </ListView>
+</LinearLayout>
