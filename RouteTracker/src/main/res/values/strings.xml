@@ -33,5 +33,7 @@
     <string name="dl_error_directories">DataLayer cannot create directories</string>
     <string name="dl_security_exception">DataLayer does not have permission to access UploadService</string>
     <string name="rim_error_directories">RideInfoManager cannot create directories</string>
+    <string name="menu_track">Ride Tracker</string>
+    <string name="menu_rideList">List of Rides</string>
 
 </resources>

@@ -137,7 +137,7 @@ public class UrlInfo {
 
                     // Parse the file
                     try {
-                        this.url =  UrlInfo.Parse(sb.toString());
+                        this.url = UrlInfo.Parse(sb.toString());
                         loaded = true;
                     }
                     catch(Exception ex) {

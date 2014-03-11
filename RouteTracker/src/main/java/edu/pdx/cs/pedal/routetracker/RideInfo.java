@@ -198,7 +198,7 @@ public class RideInfo {
             if (version.equals(VERSION_0_0)) {
                 // Validate presence of JSON fields
                 if (jsonObject.containsKey(JSON_FIELD_DISTANCE_KM) &&
-                    jsonObject.containsKey(JSON_FIELD_AVG_SPEED_KPH)) {
+                        jsonObject.containsKey(JSON_FIELD_AVG_SPEED_KPH)) {
 
                     startTime = 0;
                     rideTime = 0;
@@ -211,11 +211,11 @@ public class RideInfo {
             }
             else if (version.equals(VERSION_0_1)) {
                 if (jsonObject.containsKey(JSON_FIELD_START_TIME) &&
-                    jsonObject.containsKey(JSON_FIELD_RIDE_TIME) &&
-                    jsonObject.containsKey(JSON_FIELD_DISTANCE_MI) &&
-                    jsonObject.containsKey(JSON_FIELD_AVG_SPEED_MPH) &&
-                    jsonObject.containsKey(JSON_FIELD_MAX_SPEED_MPH) &&
-                    jsonObject.containsKey(JSON_FIELD_URL)) {
+                        jsonObject.containsKey(JSON_FIELD_RIDE_TIME) &&
+                        jsonObject.containsKey(JSON_FIELD_DISTANCE_MI) &&
+                        jsonObject.containsKey(JSON_FIELD_AVG_SPEED_MPH) &&
+                        jsonObject.containsKey(JSON_FIELD_MAX_SPEED_MPH) &&
+                        jsonObject.containsKey(JSON_FIELD_URL)) {
 
                     startTime = ((Long) jsonObject.get(JSON_FIELD_START_TIME)).longValue();
                     rideTime = ((Long) jsonObject.get(JSON_FIELD_RIDE_TIME)).longValue();

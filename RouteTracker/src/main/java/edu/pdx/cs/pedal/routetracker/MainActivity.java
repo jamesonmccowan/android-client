@@ -3,6 +3,8 @@ package edu.pdx.cs.pedal.routetracker;
 import android.app.*;
 import edu.pdx.cs.pedal.routetracker.util.SystemUiHider;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -78,7 +80,6 @@ public class MainActivity extends Activity {
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
         final View contentView = findViewById(R.id.fullscreen_content);
-        Button maps = (Button) findViewById(R.id.maps);
 
         // Set up an instance of SystemUiHider to control the system UI for this activity
         mSystemUiHider = SystemUiHider.getInstance(this, contentView, HIDER_FLAGS);
@@ -110,14 +111,6 @@ public class MainActivity extends Activity {
 
         // register listener for trackingToggleButton
         trackingToggleButton.setOnCheckedChangeListener(trackingToggleButtonListener);
-
-        maps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), Maps.class);
-                startActivityForResult(intent, 0);
-            }
-        });
     }
 
     // listener for trackingToggleButton's events
@@ -462,5 +455,22 @@ public class MainActivity extends Activity {
         public void run() {
             mSystemUiHider.hide();
         }
+    }
+
+    /* Creates the menu items */
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 0, 0, R.string.menu_rideList);
+        return true;
+    }
+
+    /* Handles item selections */
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case 0:
+                Intent i = new Intent(getApplicationContext(), RideListActivity.class);
+                startActivity(i);
+                return true;
+        }
+        return false;
     }
 }

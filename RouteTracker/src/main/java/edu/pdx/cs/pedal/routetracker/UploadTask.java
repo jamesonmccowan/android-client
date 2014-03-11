@@ -213,7 +213,7 @@ public class UploadTask extends Thread {
     }
 
     /**
-     * Reads the data in an input stream up to max bytes.  If more than
+     * Reads the data in an input stream up to max bytes. If more than
      * maxBytes are read, the input is nullified
      * @param inputStream stream to read from
      * @param maxBytes maximum number of bytes to read
@@ -273,8 +273,8 @@ public class UploadTask extends Thread {
                 inputStream.close();
             }
         }
-            catch(IOException ex) {
-                Log.d(MODULE_TAG, ex.getMessage());
+        catch(IOException ex) {
+            Log.d(MODULE_TAG, ex.getMessage());
         }
     }
 }
