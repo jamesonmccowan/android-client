@@ -79,23 +79,6 @@ public class RideActivity extends Activity {
                         .show();
             }
         });
-
-
-        Button maps = (Button) findViewById(R.id.maps);
-        if (ride.getDistanceMI() != 0){
-            maps.setVisibility(View.VISIBLE);
-        } else {
-            maps.setVisibility(View.GONE);
-        }
-
-        maps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), Maps.class);
-                intent.putExtra("rideId", rideId);
-                startActivityForResult(intent, 0);
-            }
-        });
     }
 
     /* Creates the menu items */
@@ -121,9 +104,9 @@ public class RideActivity extends Activity {
                 startActivity(i);
                 return true;
             case 2:
-                i = new Intent(getApplicationContext(), Maps_Clipping.class);
+                i = new Intent(getApplicationContext(), Maps.class);
                 i.putExtra("rideId", rideId);
-                startActivityForResult(i, 0);
+                startActivity(i);
         }
         return false;
     }

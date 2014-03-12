@@ -1,7 +1,5 @@
 package edu.pdx.cs.pedal.routetracker;
 
-import android.app.*;
-import edu.pdx.cs.pedal.routetracker.util.SystemUiHider;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,16 +10,19 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-import android.util.Log;
+import edu.pdx.cs.pedal.routetracker.util.SystemUiHider;
 
 /**
  * This class extends the <code>Activity<code/> class, and implements
@@ -73,6 +74,7 @@ public class MainActivity extends Activity {
     private MyApplication myApp = null;
     private RouteTracker routeTracker = null;
     private DataLayer dataLayer = null;
+    private Chronometer mChronometer;
 
     /**
      * Called when the activity is first created.
@@ -80,7 +82,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
@@ -188,6 +189,7 @@ public class MainActivity extends Activity {
             }
         });
 
+        mChronometer = (Chronometer) findViewById(R.id.chronometer);
     }
 
     // listener for trackingToggleButton's events
@@ -401,6 +403,7 @@ public class MainActivity extends Activity {
         }
     }
 
+
     /**
      * Inner Class: CompoundButton_MyOnCheckedChangeListener
      *
@@ -426,6 +429,9 @@ public class MainActivity extends Activity {
                 }
                 else {
                     if (isChecked) {
+                        mChronometer.start();
+                        mChronometer.setBase(SystemClock.elapsedRealtime());
+
                         try {
                             // Start the route tracking
                             routeTracker.startTracking();
@@ -436,6 +442,8 @@ public class MainActivity extends Activity {
                         }
                     }
                     else {
+                        mChronometer.stop();
+
                         try {
                             // Stop the route tracking
                             routeTracker.stopTracking();

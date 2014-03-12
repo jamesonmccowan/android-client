@@ -3,21 +3,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0099cc"
+    android:background="#000000"
     tools:context="edu.pdx.cs.pedal.routetracker.RideListActivity">
-
-    <!-- The primary full-screen view. This can be replaced with whatever view
-     is needed to present your content, e.g. VideoView, SurfaceView,
-     TextureView, etc. -->
-    <TextView android:id="@+id/logo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:keepScreenOn="true"
-        android:textStyle="bold"
-        android:textSize="24sp"
-        android:gravity="center"
-        android:textColor="#33b5e5"
-        android:text="@string/dummy_content" />
 
     <!-- List Divider -->
     <View android:layout_width="fill_parent"
