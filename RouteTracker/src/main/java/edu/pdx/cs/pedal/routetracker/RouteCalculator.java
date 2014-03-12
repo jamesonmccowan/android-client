@@ -6,8 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import com.google.android.gms.maps.model.LatLng;
-
-import java.lang.reflect.Array;
 import java.util.List;
 import java.util.ArrayList;
 import org.joda.time.DateTime;
@@ -354,92 +352,42 @@ public class RouteCalculator {
     public static double convertToRad(double x) {return x * Math.PI/180;}
 
 
-    public static List<Location> clipping(List<Location> locations){
-        /*double R = 3958.756; // Radius of earth in miles
+    public static List<Location> clipping(List<Location> locations) {
         double distance_end = 0;
         double distance_start = 0;
 
         // this is the method to clip the route from start point
-        for (int index = 0; index <= locations.size()- 1; index++){
-            double dLat = convertToRad(locations.get(index +1).getLatitude() -
-                    locations.get(index).getLatitude());
-            double dLong = convertToRad(locations.get(index +1).getLongitude() -
-                    locations.get(index).getLongitude());
-            double curr_distance = Math.pow(Math.sin(dLat/2),2) +
-                    Math.cos(convertToRad(locations.get(index).getLatitude())) *
-                            Math.cos(convertToRad(locations.get(index+1).getLatitude())) *
-                            Math.pow(Math.sin(dLong/2),2);
-            double curr1_distance = 2 * Math.atan2(Math.sqrt(curr_distance),Math.sqrt(1-curr_distance));
-            distance_start += R * curr1_distance;
-
-            if(distance_start >= start_point){
-                if (index == 0) {
-                    locations.remove(0);
-                    break;}
-                else{
-                    List<Location> sublocation = new ArrayList<Location>(
-                            locations.subList(0,index));
-                    locations.removeAll(sublocation);
-                    break;}}
-        }
-
-        // this is the method to clip the route from end point
-        for (int index = locations.size() -1; index >= 0; index--){
-            double dLat = convertToRad(locations.get(index -1).getLatitude() -
-                    locations.get(index).getLatitude());
-            double dLong = convertToRad(locations.get(index -1).getLongitude() -
-                    locations.get(index).getLongitude());
-            double curr_distance = Math.pow(Math.sin(dLat/2),2) +
-                    Math.cos(convertToRad(locations.get(index).getLatitude())) *
-                            Math.cos(convertToRad(locations.get(index - 1).getLatitude())) *
-                            Math.pow(Math.sin(dLong/2),2);
-            double curr1_distance = 2 * Math.atan2(Math.sqrt(curr_distance),Math.sqrt(1-curr_distance));
-            distance_end += R * curr1_distance;
-
-
-            if (distance_end >= end_point)
-            {
-                if(index == locations.size() - 1) {
-                    locations.remove(locations.size() - 1);
-                    break;}
-                else{
-                    List<Location> sublocation = new ArrayList<Location>(
-                            locations.subList(index +1, locations.size()-1));
-                    locations.removeAll(sublocation);
-                    break;}}
-        }*/
-        double distance_end = 0;
-        double distance_start = 0;
-
-        // this is the method to clip the route from start point
-        for (int index = 0; index <= locations.size()- 1; index++){
+        for (int index = 0; index <= locations.size()- 1; index++) {
             distance_start += ((double) locations.get(index +1).distanceTo(locations.get(index))) * MILES_PER_KILOMETER / 1000;
 
-            if(distance_start >= start_point){
+            if (distance_start >= start_point){
                 if (index == 0) {
                     locations.remove(0);
-                    break;}
-                else{
+                    break;
+                } else{
                     List<Location> sublocation = new ArrayList<Location>(
                             locations.subList(0,index));
                     locations.removeAll(sublocation);
-                    break;}}
+                    break;
+                }
+            }
         }
 
         // this is the method to clip the route from end point
-        for (int index = locations.size() -1; index >= 0; index--){
+        for (int index = locations.size() -1; index >= 0; index--) {
             distance_end += ((double) locations.get(index -1).distanceTo(locations.get(index))) * MILES_PER_KILOMETER / 1000;
 
-            if (distance_end >= end_point)
-            {
+            if (distance_end >= end_point) {
                 if(index == locations.size() - 1) {
                     locations.remove(locations.size() - 1);
-                    break;}
-                else{
+                    break;
+                } else {
                     List<Location> sublocation = new ArrayList<Location>(
                             locations.subList(index +1, locations.size()-1));
                     locations.removeAll(sublocation);
-                    break;}}
+                    break;
+                }
+            }
         }
         return locations;
     }
